@@ -48,7 +48,7 @@ const PdfViewer = memo(({ buffer }) => {
         id: 'thumbnail',
         label: 'サムネイルに設定',
         click: async () => {
-          let item = (await window.eagle.item.getSelected())[0];
+          let item = (await window.eagle.item.getSelected())[0]
           const image = canvas.current.toDataURL('image/png')
 
 
@@ -98,18 +98,18 @@ const PdfViewer = memo(({ buffer }) => {
     const render = async () => {
       const page = await pdf.getPage(currentPage)
       /// 4倍でも荒くなるPDFがあったため大きくしておく
-      const scale = 8;
-      const viewport = page.getViewport({ scale });
+      const scale = 8
+      const viewport = page.getViewport({ scale })
 
       canvas.current.style.width = null
       canvas.current.style.height = null
-      canvas.current.height = viewport.height;
-      canvas.current.width = viewport.width;
+      canvas.current.height = viewport.height
+      canvas.current.width = viewport.width
 
       const renderContext = {
         canvasContext: canvas.current.getContext('2d'),
         viewport: viewport
-      };
+      }
       return page.render(renderContext)
     }
 

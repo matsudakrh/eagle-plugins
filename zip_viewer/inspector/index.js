@@ -1,4 +1,4 @@
-const yauzl = require('yauzl');
+const yauzl = require('yauzl')
 const { getFolderStructure, printFolderStructure } = require('./zip-tree.js')
 const charEncode = require('./char-encode')
 
@@ -31,8 +31,8 @@ const byteUnit = (value) => {
 // Listen to plugin creation
 eagle.onPluginCreate(async (plugin) => {
   // Get the current theme
-  const theme = await eagle.app.theme;
-  document.body.setAttribute('theme', theme);
+  const theme = await eagle.app.theme
+  document.body.setAttribute('theme', theme)
 
   const items = await eagle.item.getSelected()
   const item = items[0]
@@ -54,7 +54,7 @@ eagle.onPluginCreate(async (plugin) => {
       entry.isDirectory = entry.fileName.endsWith('/')
       entries.push(entry)
       zipFile.readEntry()
-    });
+    })
 
     zipFile.once('end', function() {
     entries.sort((a, b) => {
@@ -77,12 +77,12 @@ eagle.onPluginCreate(async (plugin) => {
       const tree = printFolderStructure(structure)
       const treeField = document.querySelector('#structure')
       treeField.textContent = tree
-      zipFile.close();
-    });
+      zipFile.close()
+    })
   })
-});
+})
 
 // Listen to theme changes
 eagle.onThemeChanged((theme) => {
-  document.body.setAttribute('theme', theme);
-});
+  document.body.setAttribute('theme', theme)
+})

@@ -14,23 +14,23 @@ import {
   Routes,
   useLocation,
   useNavigate,
-  MemoryRouter,
   HashRouter,
-  NavLink,
 } from 'react-router-dom'
 import { useKey } from 'react-use'
 import { fileTypeFromBuffer } from 'file-type'
 import store from './store.js'
-import { openDirectory } from './directory-reducer.js'
+import { setStructure, setCurrentDirectory } from './directory-store.js'
+const {
+  findObjectByCondition,
+} = require('./lib/zip-tree.js')
 const fs = require('fs')
 const yauzl = require('yauzl')
+const _ = require('lodash')
+const { Entry } = yauzl
 const charEncode = require('./lib/char-encode')
 
 // HTMLからみた相対パスを書く
 const resizeThumbnail = require('./lib/resize-thumbnail.js')
-const {
-  setFolderStructure,
-} = require('./lib/zip-tree.js')
 const styles = require('./styles.js')
 
 const {
@@ -124,7 +124,7 @@ const ListThumbnail = memo(({
           let _fileType
           readStream.on('data', (chunk) => {
             chunks.push(chunk)
-            if (isImage !== null) {
+            if (isImage !== null || _fileType) {
               return
             }
             if (entry.encodedFileName.endsWith('txt')) {
@@ -133,7 +133,9 @@ const ListThumbnail = memo(({
               return
             }
             fileTypeFromBuffer(Buffer.concat(chunks)).then((fileType) => {
-              console.log(fileType)
+              if (_fileType) {
+                return
+              }
               if (fileType) {
                 _fileType = fileType
                 setFileType(fileType)
@@ -301,7 +303,6 @@ const Preview = memo(({ entries }) => {
         return new Promise(async (resolve, reject) => {
           try {
             await fileTypeFromBuffer(binary).then((fileType) => {
-              console.log(fileType)
               setFileType(fileType)
               /// Error: stream destroyed
               readStream.destroy()
@@ -425,69 +426,111 @@ const Preview = memo(({ entries }) => {
   </div>
 })
 
-const Entries = memo(({ entries = [] }) => {
-  const directoryPrefix = useSelector((state) => state.directory.directoryPrefix)
-  const index = useSelector((state) => state.directory.index)
+const Entries = memo(({ entries }) => {
+  const structure = useSelector((state) => state.directory.structure)
+  const currentDirectory = useSelector((state) => state.directory.currentDirectory)
   const dispath = useDispatch()
   const [visibleEntries, setVisibleEntries] = useState([])
-  const directories = directoryPrefix.split('/').filter(dir => dir)
 
-  useEffect(() => {
-    setFolderStructure(entries)
-  }, [entries])
-
-  useEffect(() => {
-    if (!entries.length) {
+  const parentDirectory = useMemo(() => {
+    if (!structure || !currentDirectory) {
       return
     }
-    const newentries = entries.filter(entry => {
-      return entry.nestIndex === index && entry.encodedFileName.startsWith(directoryPrefix)
+
+    return findObjectByCondition(structure, (obj) => {
+      const children = Object.values(obj)
+      const dirs = children.filter(child => typeof child === 'object' && child !== null)
+
+      return dirs.some((value) => {
+        return value.$_uuid === currentDirectory.$_uuid
+      })
     })
-    /// index: 0が存在しないケースがあったため対策
-    if (!newentries.length && !visibleEntries.length) {
-      dispath(openDirectory({
-        index: index + 1,
-        directoryPrefix: '',
-      }))
+  }, [structure, currentDirectory])
+
+  useEffect(() => {
+    if (!currentDirectory) {
       return
     }
-    setVisibleEntries(newentries)
-  }, [directoryPrefix, index, entries])
 
-  const handleOpenDirectory = useCallback((name) => {
-    dispath(openDirectory({
-      directoryPrefix: name,
-      index: index + 1,
-    }))
-  }, [index])
+    const dupDir = _.cloneDeep(currentDirectory)
+    const filteredDir = _.omitBy(dupDir, (value, key) => {
+      return key.startsWith('$_')
+    })
 
-  const handleBack = () => {
-    const paths =  directoryPrefix.split('/').filter(dir => dir)
-    paths.pop()
-    dispath(openDirectory({
-      directoryPrefix: paths.join('/'),
-      index: index - 1
-    }))
-  }
+    const children = Object.values(filteredDir)
+    const dirs = children.filter(child => typeof child === 'object' && child !== null)
+    const uuids = children.filter(child => typeof child === 'string')
+    const files = entries.filter(entry => uuids.includes(entry.$_uuid))
+    setVisibleEntries([...dirs, ...files])
+  }, [currentDirectory, entries])
+
+  useEffect(() => {
+    const keys = Object.keys(structure)
+    if (!keys.length) {
+      return
+    }
+
+    if (currentDirectory) {
+      return
+    }
+
+    dispath(setCurrentDirectory(structure))
+  }, [structure])
+
+  const handleOpenDirectory = useCallback((dir) => {
+    dispath(setCurrentDirectory(dir))
+  }, [])
+
+  const handleBack = useCallback(() => {
+    if (!currentDirectory) {
+      return
+    }
+    const dir = findObjectByCondition(structure, (obj) => {
+      const children = Object.values(obj)
+      const dirs = children.filter(child => typeof child === 'object' && child !== null)
+
+      return dirs.some((value) => {
+        return value.$_uuid === currentDirectory.$_uuid
+      })
+    })
+
+    dispath(setCurrentDirectory(dir))
+  }, [currentDirectory])
 
   return <div>
-    {entries.some((entry) => entry.nestIndex === index - 1) ? <div>
-      <span onClick={handleBack}>
+    <div>
+      {parentDirectory ? <span onClick={handleBack}>
         前のフォルダに戻る
-      </span>
+      </span> : null}
       <span style={{
         whiteSpace: 'pre-wrap',
-      }}>      「{directories[directories.length - 1]}」</span>
-    </div> : null}
+        paddingLeft: '12px',
+      }}>
+       {currentDirectory?.$_name ? `「${currentDirectory.$_name}」` : null}
+      </span>
+    </div>
     <div id="images" style={gridStyle.images}>
-    {visibleEntries.map((entry) => {
-        return <ListThumbnail
-          key={entry.encodedFileName}
-          entry={entry}
-          index={entries.findIndex(e => entry === e)}
-          onOpenDirectory={handleOpenDirectory}
-        />
-      }) }
+      {
+        visibleEntries.map((entry) => {
+          const isEntry = entry instanceof Entry
+
+          if (isEntry) {
+            return <ListThumbnail
+              key={entry.encodedFileName}
+              entry={entry}
+              index={entries.findIndex(e => entry === e)}
+              onOpenDirectory={handleOpenDirectory}
+            />
+          }
+
+          return <div key={entry.$_name} onDoubleClick={() => handleOpenDirectory(entry)}>
+            <div>
+              <img style={gridStyle.img} src="./resources/kkrn_icon_folder_2.png" alt="" />
+            </div>
+            <p style={gridStyle.p}>{entry.$_name}</p>
+          </div>
+        })
+      }
     </div>
   </div>
 })
@@ -502,6 +545,7 @@ pages
 
 const App = memo(() => {
   const [entries, setEntries] = useState([])
+  const dispatch = useDispatch()
   useEffect(() => {
     let _file
     window.eagle.item.getSelected().then((selected) => {
@@ -523,17 +567,17 @@ const App = memo(() => {
         }
         _file = zipFile
 
-        const _entries = []
+        const entries = []
         zipFile.readEntry()
         zipFile.on('entry', (entry) => {
           entry.encodedFileName = charEncode(entry.fileNameRaw)
           entry.isDirectory = entry.encodedFileName.endsWith('/')
           entry.zipFile = zipFile
-          _entries.push(entry)
+          entries.push(entry)
           zipFile.readEntry()
         })
         zipFile.on('end', () => {
-          _entries.sort((a, b) => {
+          entries.sort((a, b) => {
             const aName = a.encodedFileName
             const bName = b.encodedFileName
 
@@ -549,7 +593,8 @@ const App = memo(() => {
             })
           })
 
-          setEntries(_entries)
+          setEntries(entries)
+          dispatch(setStructure(entries))
         })
       })
     })
@@ -561,22 +606,16 @@ const App = memo(() => {
     }
   }, [])
 
-  if (!entries.length) {
-    return <div></div>
-  }
-
-  return (<Provider store={store}>
-    <HashRouter>
-      <Routes>
-        <Route key="entries" index element={<Entries entries={entries} />} />
-        <Route
-          key="preview"
-          path="/preview"
-          element={<Preview entries={entries} />}
-        />
-      </Routes>
-    </HashRouter>
-  </Provider>)
+  return (<HashRouter>
+    <Routes>
+      <Route key="entries" index element={<Entries entries={entries} />} />
+      <Route
+        key="preview"
+        path="/preview"
+        element={<Preview entries={entries}  />}
+      />
+    </Routes>
+  </HashRouter>)
 })
 
 if (window.createdEaglePlugin) {
@@ -584,14 +623,18 @@ if (window.createdEaglePlugin) {
   window.setTimeout(() => {
     const root = createRoot(document.getElementById('root'))
     root.render(
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     )
   }, 200)
 } else {
   eagle.onPluginCreate(() => {
     const root = createRoot(document.getElementById('root'))
     root.render(
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     )
   })
 }

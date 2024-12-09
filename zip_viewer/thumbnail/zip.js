@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs')
 const yauzl = require('yauzl')
 const imageSize = require('../lib/image-size')
 const resizeThumbnail = require('../viewer/lib/resize-thumbnail.js')
@@ -13,7 +13,7 @@ module.exports = async ({ src, dest, item }) => {
         }
 
         let finded = false
-        zipFile.readEntry();
+        zipFile.readEntry()
         zipFile.on('entry', function(entry) {
           if (finded) {
             return
@@ -21,7 +21,7 @@ module.exports = async ({ src, dest, item }) => {
           const fileName = entry.fileName.toLowerCase()
           const isImage = fileName.endsWith('jpg') || fileName.endsWith('jpeg') || fileName.endsWith('png')
           if (entry.fileName.endsWith('/') || !isImage) {
-            zipFile.readEntry();
+            zipFile.readEntry()
           } else {
             zipFile.openReadStream(entry, {}, (err, readStream) => {
               if (err) {
@@ -44,30 +44,30 @@ module.exports = async ({ src, dest, item }) => {
                       dest,
                       buffer.toString('base64'),
                       { encoding: 'base64' }
-                    );
-                    let size = await imageSize(dest);
-                    item.height = size?.height || item.height;
-                    item.width = size?.width || item.width;
-                    zipFile.close();
+                    )
+                    let size = await imageSize(dest)
+                    item.height = size?.height || item.height
+                    item.width = size?.width || item.width
+                    zipFile.close()
                     // 4. return the result
-                    return resolve(item);
+                    return resolve(item)
                   } catch (err) {
                     return reject(err)
                   }
                 })
-              });
-            });
+              })
+            })
           }
-        });
+        })
 
         zipFile.once('end', function() {
-          zipFile.close();
+          zipFile.close()
           reject(err)
-        });
+        })
       })
     }
     catch (err) {
-      return reject(err);
+      return reject(err)
     }
-  });
+  })
 }
