@@ -1,0 +1,28 @@
+{
+    "id": "6580934d-091b-48e4-9992-744f72eb65ef",
+    "version": "1.0.0",
+    "platform": "all",
+    "arch": "all",
+    "name": "zip viewer",
+    "logo": "/logo.png",
+    "keywords": [
+        "zip"
+    ],
+    "devTools": false,
+    "preview": {
+        "zip": {
+            "inspector": {
+                "path": "inspector/index.html",
+                "height": 500,
+                "multiSelect": false
+            },
+            "thumbnail": {
+                "path": "thumbnail/zip.js",
+                "size": 400
+            },
+            "viewer": {
+                "path": "viewer/zip.html"
+            }
+        }
+    }
+}
