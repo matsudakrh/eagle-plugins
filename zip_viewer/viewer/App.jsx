@@ -212,8 +212,15 @@ const Preview = memo(({ entries }) => {
   const navigate = useNavigate()
   const [fileType, setFileType] = useState()
   const entry = useMemo(() => {
+    //　ファイルを閉じてもプレビューへの遷移が残っているケースがあったため暫定対応
+    if (!(Number.isInteger(location.state?.index))) {
+      navigate('/', {
+        replace: true
+      })
+      return
+    }
     return entries[location.state.index]
-  }, [entries, location.state.index])
+  }, [entries, location.state?.index])
   const words = useMemo(() => {
     if (!entry) {
       return <div></div>
