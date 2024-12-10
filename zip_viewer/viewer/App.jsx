@@ -85,7 +85,7 @@ const ListThumbnail = memo(({
             .promises
             .writeFile(
               filePath,
-              src.replace('data:' + fileType.mime + 'base64,',''),
+              src.replace('data:' + fileType.mime + ';base64,',''),
               { encoding: 'base64' }
             )
             .then(() => {
@@ -213,10 +213,14 @@ const Preview = memo(({ entries }) => {
   const [fileType, setFileType] = useState()
   const entry = useMemo(() => {
     return entries[location.state.index]
-  }, [location.state.index])
+  }, [entries, location.state.index])
   const words = useMemo(() => {
+    if (!entry) {
+      return <div></div>
+    }
     return entry.encodedFileName.split('/').filter((word) => word !== '')
-  }, [entry.fileNameRaw])
+  }, [entry])
+
   const handlePrev = () => {
     if (location.state.index === 0) {
       return
@@ -285,12 +289,10 @@ const Preview = memo(({ entries }) => {
 
   // ファイルタイプの取得のみを行う
   useEffect(() => {
-    entry.zipFile.openReadStream(entry, {
-      // decompress: false,
-      // decrypt: null,
-      // start: 0,                  // actually the default is null, see below
-      // end: 1024 ** 2, // actually the default is null, see below
-    }, (err, readStream) => {
+    if (!entry) {
+      return
+    }
+    entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
       if (err) {
         console.error(err)
         return
@@ -314,9 +316,12 @@ const Preview = memo(({ entries }) => {
         })
       })
     })
-  }, [location.state])
+  }, [entry, location.state])
 
   useEffect(() => {
+    if (!entry) {
+      return
+    }
     if (
       fileType?.mime.startsWith('image/') || fileType?.mime === 'application/pdf' || entry.encodedFileName.endsWith('txt')) {
       entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
@@ -350,9 +355,13 @@ const Preview = memo(({ entries }) => {
       })
     }
     console.log('各処理を行う')
-  }, [fileType])
+  }, [entry, fileType])
 
   const detailComponent = () => {
+    if (!entry) {
+      return <div></div>
+    }
+
     if (fileType?.mime.startsWith('image/')) {
       return <img
         src={imgSrc}
