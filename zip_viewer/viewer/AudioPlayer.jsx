@@ -1,40 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-// 音声ストリームを処理する関数
-function handleAudioStream(readStream) {
-  const audioContext = new (window.AudioContext || window.webkitAudioContext)()
-
-  // ReadableStreamからArrayBufferを生成するためのバッファを用意
-  const chunks = []
-
-  // ストリームのデータをchunksに蓄積
-  readStream.on('data', chunk => {
-    chunks.push(chunk)
-  })
-
-  readStream.on('end', () => {
-    // ストリームが終了したら、バッファを結合してArrayBufferに変換
-    const buffer = Buffer.concat(chunks)
-    const arrayBuffer = buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
-
-    // AudioContextでデコードして音声を再生
-    audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
-      const source = audioContext.createBufferSource()
-      source.buffer = audioBuffer
-      source.connect(audioContext.destination)
-      source.start(0)
-    }, (err) => {
-      console.error('AudioBufferのデコードに失敗しました:', err)
-    })
-  })
-
-  // エラーが発生した場合の処理
-  readStream.on('error', (err) => {
-    console.error('ストリーム読み込み中にエラーが発生しました:', err)
-  })
-}
 const AudioPlayer = ({ entry }) => {
   const [isPlaying, setIsPlaying] = useState(false)
+  const [volume, setVolume] = useState(0.1)
+  const [audioGain, setAudioGain] = useState()
+
   const audioContext = useMemo(() => {
     return new window.AudioContext()
   }, [])
@@ -58,11 +28,14 @@ const AudioPlayer = ({ entry }) => {
 
         // AudioContextでデコードして音声を再生
         audioContext.decodeAudioData(arrayBuffer, (audioBuffer) => {
+          const gainNode = audioContext.createGain()
           const source = audioContext.createBufferSource()
           source.buffer = audioBuffer
-          source.connect(audioContext.destination)
+          gainNode.connect(audioContext.destination)
+          source.connect(gainNode)
           source.start(0)
           setIsPlaying(true)
+          setAudioGain(gainNode)
         }, (err) => {
           console.error('AudioBufferのデコードに失敗しました:', err)
         })
@@ -88,6 +61,18 @@ const AudioPlayer = ({ entry }) => {
     }
   }, [entry])
 
+  useEffect(() => {
+    if (!audioGain) {
+      return
+    }
+    audioGain.gain.value = volume
+  }, [volume, audioGain])
+
+
+  const handleChangeVolume = useCallback( (e) => {
+    setVolume(e.target.value / 100)
+  }, [])
+
   return <div>
     <div onClick={() => {
       if (isPlaying) {
@@ -102,6 +87,11 @@ const AudioPlayer = ({ entry }) => {
     }}>
       再生する
     </div>
+
+    <dl>
+      <dt>ボリューム</dt>
+      <dd><input value={volume * 100} onChange={handleChangeVolume} type="range" /></dd>
+    </dl>
   </div>
 }
 window.components.AudioPlayer = AudioPlayer
