@@ -1,6 +1,13 @@
 const charEncode = require('./char-encode.js')
 const { Entry } = require('yauzl')
 
+
+const ignoreNames = [
+  '__MACOSX',
+  'Thumbs.db',
+  'Desktop.ini',
+]
+
 // フォルダ構成をツリー形式で表示する関数
 function setFolderStructure(entries) {
   const structure = {}
@@ -11,6 +18,9 @@ function setFolderStructure(entries) {
     let currentLevel = structure
     pathParts.forEach((part, index) => {
       if (!currentLevel[part]) {
+        if (ignoreNames.includes(part) || part.startsWith('.')) {
+          return
+        }
         // 最後の部分がファイルの場合はファイルとして登録
         if (index === pathParts.length - 1 && !entry.isDirectory) {
           entry.$_uuid = window.crypto.randomUUID()
