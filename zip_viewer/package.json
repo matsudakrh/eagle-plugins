@@ -4,7 +4,7 @@
 		"chardet": "^2.0.0",
 		"file-type": "^19.6.0",
 		"iconv-lite": "^0.6.3",
-		"react-router": "^7.0.2",
+		"lodash": "^4.17.21",
 		"sharp": "^0.33.5",
 		"yauzl": "^3.2.0"
 	},
