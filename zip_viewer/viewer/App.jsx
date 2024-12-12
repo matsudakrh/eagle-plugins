@@ -36,6 +36,7 @@ const styles = require('./styles.js')
 const {
   AudioPlayer,
   PdfViewer,
+  VideoPlayer,
 } = window.components
 
 const { gridStyle } = styles
@@ -402,6 +403,10 @@ const Preview = memo(({ entries }) => {
       return <div>
         <AudioPlayer entry={entry} />
       </div>
+    }
+
+    if (fileType?.mime.startsWith('video/')) {
+      return <VideoPlayer entry={entry} />
     }
 
     return <div>
