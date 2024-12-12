@@ -1,19 +1,72 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+const SeekBar = () => {
+  const canvas = useRef(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [currentPosition, setCurrentPosition] = useState(0)
+
+  useEffect(() => {
+    if (!canvas.current) {
+      return
+    }
+
+    const el = canvas.current.closest('*:not(canvas)')
+    const bounding = el.getBoundingClientRect()
+    canvas.current.width = bounding.width
+    const width = canvas.current.width
+    const height = canvas.current.height
+    const ctx = canvas.current.getContext('2d')
+    ctx.clearRect(0, 0, width, height)
+    ctx.lineWidth = 1
+    ctx.strokeStyle = '#fff'
+    ctx.beginPath()
+    ctx.moveTo(0, height / 2)
+    ctx.lineTo(bounding.width, height / 2)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.lineWidth = 1
+    ctx.moveTo(currentPosition, 0)
+    ctx.lineTo(currentPosition, height)
+    ctx.stroke()
+  }, [canvas, currentPosition, isDragging])
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      setCurrentPosition(e.clientX - canvas.current.offsetLeft)
+    }
+  }
+
+  const handlePointerDown = () => {
+    setIsDragging(true)
+  }
+
+  const handlePointerUp = () => {
+    setIsDragging(false)
+  }
+
+  return <canvas
+    ref={canvas}
+    onMouseMove={handleMouseMove}
+    onPointerDown={handlePointerDown}
+    onPointerUp={handlePointerUp}
+  >
+  </canvas>
+}
+
 const AudioPlayer = ({ entry }) => {
   const [isPlaying, setIsPlaying] = useState(false)
-  const [volume, setVolume] = useState(0.1)
+  const [volume, setVolume] = useState(0.01)
   const [audioGain, setAudioGain] = useState()
+  const [totalDuration, setTotalDuration] = useState(0)
 
   const audioContext = useMemo(() => {
     return new window.AudioContext()
   }, [])
 
   useEffect(() => {
-    if (!entry) {
+    if (!entry || audioGain) {
       return
     }
-    let source
 
     entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
       const chunks = []
@@ -36,6 +89,7 @@ const AudioPlayer = ({ entry }) => {
           source.start(0)
           setIsPlaying(true)
           setAudioGain(gainNode)
+          setTotalDuration(audioBuffer.duration)
         }, (err) => {
           console.error('AudioBufferのデコードに失敗しました:', err)
         })
@@ -52,9 +106,6 @@ const AudioPlayer = ({ entry }) => {
         if (audioContext.state !== 'closed') {
           audioContext.close()
         }
-        if (source) {
-          source.disconnect()
-        }
       } catch (e) {
         console.log(e)
       }
@@ -68,9 +119,8 @@ const AudioPlayer = ({ entry }) => {
     audioGain.gain.value = volume
   }, [volume, audioGain])
 
-
   const handleChangeVolume = useCallback( (e) => {
-    setVolume(e.target.value / 100)
+    setVolume(e.target.value)
   }, [])
 
   return <div>
@@ -85,12 +135,27 @@ const AudioPlayer = ({ entry }) => {
       audioContext.resume()
       setIsPlaying(true)
     }}>
-      再生する
+      {isPlaying ? '再生を止める' : '再生する'}
     </div>
 
     <dl>
       <dt>ボリューム</dt>
-      <dd><input value={volume * 100} onChange={handleChangeVolume} type="range" /></dd>
+      <dd>
+        <input
+          value={volume}
+          min="0"
+          max="1"
+          step="0.001"
+          type="range"
+          onChange={handleChangeVolume}
+        />
+      </dd>
+      <dt>シークバー</dt>
+      <dd style={{ margin: 0 }}>
+        {audioContext.state !== 'closed' && totalDuration
+          ? <SeekBar totalDuration={totalDuration} />
+          : null}
+      </dd>
     </dl>
   </div>
 }
