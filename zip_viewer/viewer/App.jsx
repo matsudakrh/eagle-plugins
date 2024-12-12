@@ -400,9 +400,7 @@ const Preview = memo(({ entries }) => {
     }
 
     if (fileType?.mime.startsWith('audio/')) {
-      return <div>
-        <AudioPlayer entry={entry} />
-      </div>
+      return <AudioPlayer entry={entry} />
     }
 
     if (fileType?.mime.startsWith('video/')) {
