@@ -44,7 +44,19 @@ const VideoPlayer = ({ entry }) => {
       autoPlay
       controls
     ></video>
-    : <div></div>
+    : <img
+      style={{
+        width: '200px',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        margin: 'auto',
+      }}
+      src="./resources/spin.svg"
+      alt=""
+    />
 }
 
 window.components.VideoPlayer = VideoPlayer
