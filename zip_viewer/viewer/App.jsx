@@ -153,8 +153,6 @@ const ListThumbnail = memo(({
               return
             }
             if (entry.encodedFileName.endsWith('txt')) {
-              console.log('TODO: テキストをキャンバスに書き出してサムネイルを作る')
-              readStream.destroy()
               return
             }
             fileTypeFromBuffer(Buffer.concat(chunks)).then((fileType) => {
@@ -181,6 +179,27 @@ const ListThumbnail = memo(({
           })
           readStream.on('end', () => {
             const buffer = Buffer.concat(chunks)
+
+            if (entry.encodedFileName.endsWith('txt')) {
+              const canvas = document.createElement('canvas')
+              canvas.width = 200
+              canvas.height = 200
+              const ctx = canvas.getContext('2d')
+              ctx.fillStyle = '#fff'
+              ctx.font = '20px Roboto medium'
+
+              let y = 20
+              charEncode(buffer).split('\n').forEach((line, index) => {
+                ctx.fillText(line, 0, y)
+                y += 32
+              })
+
+              canvas.toBlob((blob) => {
+                setSrc(URL.createObjectURL(blob))
+              })
+
+              return
+            }
             resizeThumbnail(buffer, (buffer) => {
               setSrc(`data:${_fileType.mime};base64,${buffer.toString('base64')}`)
             })
@@ -190,6 +209,12 @@ const ListThumbnail = memo(({
     }
     const observer = new IntersectionObserver(handler, options)
     observer.observe(ref.current)
+
+    return () => {
+      if (src.startsWith('blob')) {
+        URL.revokeObjectURL(src)
+      }
+    }
   }, [])
 
   const handleDbClick = () => {
@@ -208,7 +233,10 @@ const ListThumbnail = memo(({
   return (
     <div ref={ref} onDoubleClick={handleDbClick}>
       <div>
-        <img style={gridStyle.img} onContextMenu={handleContextMenu} src={src} alt='' />
+        {src.startsWith('blob')
+          ? <div style={{ padding: '4px', border: '1px solid #fff' }} ><img src={src} style={{ maxWidth: '100%' }} alt="" /></div>
+          : <img style={gridStyle.img} onContextMenu={handleContextMenu} src={src} alt="" />
+        }
       </div>
       <p style={gridStyle.p}>{words[words.length - 1]}</p>
     </div>
