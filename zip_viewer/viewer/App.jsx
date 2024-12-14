@@ -469,7 +469,7 @@ const Preview = memo(({ entries }) => {
     }
 
     if (entry.fileName.endsWith('txt')) {
-      return <div style={{ whiteSpace: 'pre-wrap', padding: '24px' }}>
+      return <div style={{ whiteSpace: 'pre-wrap', padding: '24px', overflow: 'auto' }}>
         {text}
       </div>
     }
@@ -518,7 +518,7 @@ const Preview = memo(({ entries }) => {
         </button>
       </div>
     </header>
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', overflow: 'auto' }}>
       {detailComponent()}
     </div>
   </div>
