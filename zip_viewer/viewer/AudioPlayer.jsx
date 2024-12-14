@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 const drawWave=  require('./lib/draw-wave.js')
 
 const audioContext = new window.AudioContext()
@@ -30,7 +30,7 @@ const SeekBar = ({ audioBuffer, audio }) => {
       return
     }
     drawWave(audioBuffer, waveCanvas.current)
-  }, [audioBuffer, waveCanvas.current])
+  }, [audioBuffer, waveCanvas])
 
   useEffect(() => {
     if (!canvas.current || !audioBuffer) {
@@ -95,6 +95,7 @@ const SeekBar = ({ audioBuffer, audio }) => {
         bottom: 0,
         margin: 'auto',
         zIndex: 1,
+        maxWidth: '100%',
       }}
     ></canvas>
     <canvas
@@ -105,6 +106,7 @@ const SeekBar = ({ audioBuffer, audio }) => {
         bottom: 0,
         margin: 'auto',
         zIndex: 2,
+        maxWidth: '100%',
       }}
       onPointerDown={handlePointerDown}
     >
