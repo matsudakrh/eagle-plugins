@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useState } from 'react'
 
-const VideoPlayer = ({ entry }) => {
+const VideoPlayer = ({ entry, onContextMenu }) => {
   const [src, setSrc] = useState()
 
   useLayoutEffect(() => {
@@ -43,10 +43,10 @@ const VideoPlayer = ({ entry }) => {
       }}
       autoPlay
       controls
+      onContextMenu={onContextMenu}
     ></video>
     : <img
       style={{
-        width: '200px',
         position: 'absolute',
         top: 0,
         left: 0,

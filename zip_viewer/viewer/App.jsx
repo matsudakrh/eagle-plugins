@@ -63,15 +63,38 @@ const ListThumbnail = memo(({
   }, [])
 
   const handleContextMenu = () => {
-    window.eagle.contextMenu.open([
-      {
-        id: 'export',
-        label: 'ファイルをエクスポート',
-        click: () => {
-          console.log('TODO: エクスポート処理')
-        }
-      },
-      {
+    if (entry.isDirectory) {
+      return
+    }
+    const items = [{
+      id: 'export',
+      label: 'ファイルをエクスポート',
+      click: async () => {
+        entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+          if (err) {
+            return
+          }
+          const chunks = []
+          readStream.on('data', (chunk) => {
+            chunks.push(chunk)
+          })
+          readStream.on('end', () => {
+            const buffer = Buffer.concat(chunks)
+            const blob = new Blob([buffer], { type: fileType.mime })
+            const url = URL.createObjectURL(blob)
+            // ダウンロードリンクを作成
+            const a = document.createElement('a')
+            a.href = url
+            a.download = entry.encodedFileName
+            a.click()
+
+            URL.revokeObjectURL(url);
+          })
+        })
+      }
+    }]
+    if  (fileType?.mime.startsWith('image/')) {
+      items.push(      {
         id: 'thumbnail',
         label: 'サムネイルに設定',
         click: async () => {
@@ -97,8 +120,9 @@ const ListThumbnail = memo(({
             console.log(result)
           })
         }
-      },
-    ])
+      })
+    }
+    window.eagle.contextMenu.open(items)
   }
 
   useLayoutEffect(() => {
@@ -263,6 +287,33 @@ const Preview = memo(({ entries }) => {
   const handleContextMenu = () => {
     window.eagle.contextMenu.open([
       {
+        id: 'export',
+        label: 'ファイルをエクスポート',
+        click: async () => {
+          entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+            if (err) {
+              return
+            }
+            const chunks = []
+            readStream.on('data', (chunk) => {
+              chunks.push(chunk)
+            })
+            readStream.on('end', () => {
+              const buffer = Buffer.concat(chunks)
+              const blob = new Blob([buffer], { type: fileType.mime })
+              const url = URL.createObjectURL(blob)
+              // ダウンロードリンクを作成
+              const a = document.createElement('a')
+              a.href = url
+              a.download = entry.encodedFileName
+              a.click()
+
+              URL.revokeObjectURL(url);
+            })
+          })
+        }
+      },
+      {
         id: 'thumbnail',
         label: 'サムネイルに設定',
         click: async () => {
@@ -404,7 +455,7 @@ const Preview = memo(({ entries }) => {
     }
 
     if (fileType?.mime.startsWith('video/')) {
-      return <VideoPlayer entry={entry} />
+      return <VideoPlayer entry={entry} onContextMenu={handleContextMenu} />
     }
 
     return <div>
