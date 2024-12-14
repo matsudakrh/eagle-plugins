@@ -11,11 +11,6 @@
     "devTools": false,
     "preview": {
         "zip": {
-            "inspector": {
-                "path": "inspector/index.html",
-                "height": 500,
-                "multiSelect": false
-            },
             "thumbnail": {
                 "path": "thumbnail/zip.js",
                 "size": 400
