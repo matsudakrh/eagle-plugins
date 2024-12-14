@@ -313,7 +313,7 @@ const Preview = memo(({ entries }) => {
   useKey('Backspace', handleBack, {}, [])
 
   const handleContextMenu = () => {
-    window.eagle.contextMenu.open([
+    const items = [
       {
         id: 'export',
         label: 'ファイルをエクスポート',
@@ -333,15 +333,18 @@ const Preview = memo(({ entries }) => {
               // ダウンロードリンクを作成
               const a = document.createElement('a')
               a.href = url
-              a.download = entry.encodedFileName
+              a.download = words[words.length - 1]
               a.click()
 
               URL.revokeObjectURL(url);
             })
           })
         }
-      },
-      {
+      }
+    ]
+
+    if (fileType?.mime.startsWith('image')) {
+      items.push(      {
         id: 'thumbnail',
         label: 'サムネイルに設定',
         click: async () => {
@@ -370,8 +373,10 @@ const Preview = memo(({ entries }) => {
             })
           })
         }
-      },
-    ])
+      })
+    }
+
+    window.eagle.contextMenu.open(items)
   }
 
   // ファイルタイプの取得のみを行う
@@ -479,7 +484,7 @@ const Preview = memo(({ entries }) => {
     }
 
     if (fileType?.mime.startsWith('audio/')) {
-      return <AudioPlayer entry={entry} />
+      return <AudioPlayer entry={entry} onContextMenu={handleContextMenu} />
     }
 
     if (fileType?.mime.startsWith('video/')) {
