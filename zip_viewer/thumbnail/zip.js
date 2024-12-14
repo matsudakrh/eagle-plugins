@@ -60,7 +60,7 @@ module.exports = async ({ src, dest, item }) => {
           }
         })
 
-        zipFile.once('end', function() {
+        zipFile.on('end', function() {
           zipFile.close()
           reject(err)
         })
