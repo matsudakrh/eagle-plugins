@@ -1,8 +1,7 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 const drawWave=  require('./lib/draw-wave.js')
 
 const audioContext = new window.AudioContext()
-
 
 const CurrentTime = ({ audio }) => {
   const [curentTime, setCurrentTime] = useState(0)
@@ -19,7 +18,11 @@ const CurrentTime = ({ audio }) => {
   return <div>
     {Number.isInteger(Number.parseInt(curentTime))
       ? `${`${Math.trunc(curentTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(curentTime % 60)}`.padStart(2, '0')}`
-      : '--:--'}
+      : '--:--'} / {
+    Number.isInteger(Number.parseInt(audio?.duration))
+      ? `${`${Math.trunc(audio?.duration / 60)}`.padStart(2, '0')}:${`${Math.ceil(audio?.duration % 60)}`.padStart(2, '0')}`
+      : '--:--'
+  }
   </div>
 }
 
@@ -115,7 +118,8 @@ const SeekBar = ({ audioBuffer, audio }) => {
         bottom: 0,
         margin: 'auto',
         zIndex: 1,
-        maxWidth: '100%',
+        width: '100%',
+        maxHeight: '100%',
       }}
     ></canvas>
     <canvas
@@ -126,7 +130,8 @@ const SeekBar = ({ audioBuffer, audio }) => {
         bottom: 0,
         margin: 'auto',
         zIndex: 2,
-        maxWidth: '100%',
+        width: '100%',
+        maxHeight: '100%',
       }}
       onPointerDown={handlePointerDown}
     >
@@ -191,7 +196,7 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
   }
 
   return <div style={{ display: 'grid', gridTemplateRows: '1fr 80px', height: '100%' }}>
-    <div onClick={handleClick} onContextMenu={onContextMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div onContextMenu={onContextMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <img src={thumb} alt="" style={{ maxWidth: '100%', maxHeight: '100%' }} />
     </div>
     <div style={{
