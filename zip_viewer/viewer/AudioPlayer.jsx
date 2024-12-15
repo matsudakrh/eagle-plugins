@@ -1,7 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 const drawWave=  require('./lib/draw-wave.js')
 
 const audioContext = new window.AudioContext()
+
+
+const CurrentTime = ({ audio }) => {
+  const [curentTime, setCurrentTime] = useState(0)
+
+  useLayoutEffect(() => {
+    if (!audio) {
+      return
+    }
+    audio.addEventListener('timeupdate', () => {
+      setCurrentTime(audio.currentTime)
+    })
+  }, [audio])
+
+  return <div>
+    {Number.isInteger(Number.parseInt(curentTime))
+      ? `${`${Math.trunc(curentTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(curentTime % 60)}`.padStart(2, '0')}`
+      : '--:--'}
+  </div>
+}
 
 const SeekBar = ({ audioBuffer, audio }) => {
   const canvas = useRef(null)
@@ -120,10 +140,9 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
   const [thumb, setThumb] = useState()
   const [audioBuffer, setAudioBuffer] = useState()
   const [isPlaying, setIsPlaying] = useState(false)
-  const [curentTime, setCurrentTime] = useState()
 
   useEffect(() => {
-    if (!entry) {
+    if (!entry || audioBuffer) {
       return
     }
     URL.revokeObjectURL(src)
@@ -177,19 +196,22 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
     </div>
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'min-content min-content min-content 1fr'
+      gridTemplateColumns: 'min-content min-content min-content 1fr',
+      borderTop: '1px solid #ffffff22',
     }}>
       <div onClick={handleClick} style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {isPlaying ? <span className="video_pause"></span> : <span className="video_play"></span>}
       </div>
       <div style={{ padding: '8px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-        {Number.isInteger(Number.parseInt(curentTime))
-          ? `${`${Math.trunc(curentTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(curentTime % 60)}`.padStart(2, '0')}`
-          : '--:--'}
+        <CurrentTime audio={audio.current} />
       </div>
       <div style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <input type="range" max="1" step="0.01" onChange={(e) => {
+        <input type="range" className="inputRange" max="1" step="0.01" onChange={(e) => {
           audio.current.volume = e.target.value
+          const activeColor = "#6dd5ff";
+          const inactiveColor = "#dddddd";
+          const ratio = (e.target.value - e.target.min) / (e.target.max - e.target.min) * 100
+          e.target.style.background = `linear-gradient(90deg, ${activeColor} ${ratio}%, ${inactiveColor} ${ratio}%)`
         }} />
       </div>
       <div>
@@ -205,9 +227,6 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
       onPlay={() => setIsPlaying(true)}
       onPause={() => setIsPlaying(false)}
       onEnded={() => setIsPlaying(false)}
-      onTimeUpdate={() => {
-        setCurrentTime(audio.current.currentTime)
-      }}
     ></audio>
   </div>
 }

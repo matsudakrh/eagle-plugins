@@ -1,5 +1,5 @@
 
-const drawWave = (audioBuffer, waveformCanvas) => {
+const drawWave = async (audioBuffer, waveformCanvas) => {
   if (!audioBuffer) return
 
   const SelectStyle = getComputedStyle(document.body)
@@ -12,7 +12,7 @@ const drawWave = (audioBuffer, waveformCanvas) => {
   waveformCanvas.height = height
   canvasContext.clearRect(0, 0, width, height)
 
-  const draw = (channel) => {
+  const draw = async (channel) => {
     // 左右のチャンネルから音量データを取得
     const rawData = audioBuffer.getChannelData(channel)
 
@@ -22,12 +22,6 @@ const drawWave = (audioBuffer, waveformCanvas) => {
 
     canvasContext.beginPath()
     canvasContext.moveTo(0, amp)
-
-    let totalMax = 0
-    for (let i = 0; i < width; i++) {
-      const max = Math.max(...rawData.slice(i * step, (i + 1) * step))
-      totalMax = Math.max(totalMax, max)
-    }
 
     // 波形データを描画
     for (let i = 0; i < width; i++) {
