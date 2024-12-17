@@ -1,15 +1,10 @@
 {
 	"dependencies": {
-		"@types/react": "^18.3.13",
 		"chardet": "^2.0.0",
 		"file-type": "^19.6.0",
 		"iconv-lite": "^0.6.3",
 		"lodash": "^4.17.21",
 		"sharp": "^0.33.5",
 		"yauzl": "^3.2.0"
-	},
-	"devDependencies": {
-		"@types/react-dom": "^18.3.1",
-		"typescript": "^5.7.2"
 	}
 }
