@@ -1,9 +1,28 @@
 {
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "parcel viewer/zip.html -d dist --public-url ./ --target node",
+		"build": "parcel build viewer/zip.html -d dist --public-url ./ --no-minify --target node"
+	},
+	"devDependencies": {
+		"@types/react": "^19.0.1",
+		"@types/react-dom": "^19.0.2",
+		"cssnano": "^7.0.6",
+		"postcss": "^8.4.49",
+		"typescript": "^5.7.2"
+	},
 	"dependencies": {
+		"@reduxjs/toolkit": "^2.5.0",
 		"chardet": "^2.0.0",
-		"file-type": "^19.6.0",
+		"file-type": "16.5.4",
 		"iconv-lite": "^0.6.3",
 		"lodash": "^4.17.21",
+		"pdfjs-dist": "3.1.81",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"react-redux": "^9.2.0",
+		"react-router-dom": "^7.0.2",
+		"react-use": "^17.6.0",
 		"sharp": "^0.33.5",
 		"yauzl": "^3.2.0"
 	}

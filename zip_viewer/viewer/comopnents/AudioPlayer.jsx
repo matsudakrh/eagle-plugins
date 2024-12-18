@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-const drawWave=  require('./lib/draw-wave.js')
+import drawWave from '../lib/draw-wave'
 
 const audioContext = new window.AudioContext()
 
@@ -235,4 +235,4 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
     ></audio>
   </div>
 }
-window.components.AudioPlayer = AudioPlayer
+export default AudioPlayer

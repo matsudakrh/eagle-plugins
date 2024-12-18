@@ -54,9 +54,9 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
         bottom: 0,
         margin: 'auto',
       }}
-      src="./resources/spin.svg"
+      src="../resources/spin.svg"
       alt=""
     />
 }
 
-window.components.VideoPlayer = VideoPlayer
+export default VideoPlayer

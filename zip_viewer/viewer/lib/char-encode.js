@@ -1,13 +1,13 @@
-const chardet = require('chardet')
-const iconv = require('iconv-lite')
+import chardet from 'chardet'
+import { decode } from 'iconv-lite'
 
 const charEncode = (binary) => {
   const encoding = chardet.detect(binary)
   if (encoding === 'UTF-8') {
     return binary.toString()
   } else {
-    return iconv.decode(binary, 'shift_jis')
+    return decode(binary, 'shift_jis')
   }
 }
 
-module.exports = charEncode
+export default charEncode

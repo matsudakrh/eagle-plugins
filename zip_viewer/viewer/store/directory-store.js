@@ -1,5 +1,5 @@
-const { setFolderStructure } = require('./lib/zip-tree.js')
-const _ = require('lodash')
+import { setFolderStructure } from '../lib/zip-tree'
+import _ from 'lodash'
 
 const ActionTypes = {
   SET_STRUCTURE: 'SET_STRUCTURE',

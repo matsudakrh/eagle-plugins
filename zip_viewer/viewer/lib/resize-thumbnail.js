@@ -1,3 +1,5 @@
+// thumbnail処理と共通にするためCommonJSとして書く
+
 const sharp = require('sharp')
 const resizeThumbnail = (binary, callback, options = { width: 400 }) => {
   sharp(binary)

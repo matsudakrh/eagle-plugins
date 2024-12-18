@@ -1,12 +1,13 @@
 import React, { useEffect, useLayoutEffect, useRef, useState, memo } from 'react'
 import { useKey } from 'react-use'
-import { default as pdfjsDist } from 'pdfjs'
-
-const fs = require('fs')
-const resizeThumbnail = require('./lib/resize-thumbnail.js')
+import * as pdfjsDist from 'pdfjs-dist'
+import resizeThumbnail from '../lib/resize-thumbnail'
+import fs from 'fs'
 
 // ページを都度描画するとテンポが悪いので前後何枚かを描画しておきたい
 // あるいは全ページを一気にレンダリングしてサムネ一覧などと兼ねる
+
+pdfjsDist.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdf.worker@1.0.0/pdf.worker.min.js'
 
 const PdfViewer = memo(({ buffer }) => {
   const canvas = useRef(null)
@@ -148,4 +149,4 @@ const PdfViewer = memo(({ buffer }) => {
   </canvas>
 })
 
-window.components.PdfViewer = PdfViewer
+export default PdfViewer

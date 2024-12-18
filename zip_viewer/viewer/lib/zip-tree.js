@@ -1,6 +1,6 @@
-const charEncode = require('./char-encode.js')
-const { Entry } = require('yauzl')
-
+import charEncode from './char-encode'
+import yauzl from 'yauzl'
+const  { Entry } = yauzl
 
 const ignoreNames = [
   '__MACOSX',
@@ -65,7 +65,7 @@ const findObjectByCondition = (obj, condition) => {
   return recursive(obj, condition)
 }
 
-module.exports = {
+export {
   setFolderStructure,
-  findObjectByCondition,
+  findObjectByCondition
 }

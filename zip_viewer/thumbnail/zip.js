@@ -38,7 +38,7 @@ module.exports = async ({ src, dest, item }) => {
               readStream.on('end', async () => {
                 const buffer = Buffer.concat(chunks)
 
-                resizeThumbnail(buffer,  async () => {
+                resizeThumbnail(buffer,  async (buffer) => {
                   try {
                     await fs.promises.writeFile(
                       dest,

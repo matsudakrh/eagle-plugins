@@ -114,22 +114,6 @@
         box-shadow: none;
       }
     </style>
-
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script type="importmap">
-    {
-      "imports": {
-        "react": "https://esm.sh/react@18.3.1?dev",
-        "react-redux": "https://esm.sh/react-redux@9.1.2?dev",
-        "@reduxjs/toolkit": "https://esm.sh/@reduxjs/toolkit@2.4.0?dev",
-        "react-dom/client": "https://esm.sh/react-dom@18.3.1/client?dev",
-        "react-use": "https://esm.sh/react-use@17.5.1?dev",
-        "react-router-dom": "https://esm.sh/react-router-dom@7.0.2?dev",
-        "file-type": "https://esm.sh/file-type@19.6.0?dev",
-        "pdfjs": "https://cdn.jsdelivr.net/npm/pdfjs-dist@3.1.81/+esm"
-      }
-    }
-    </script>
   </head>
   <body>
     <div id="root"></div>
@@ -166,11 +150,5 @@
       document.body.setAttribute('theme', theme)
     })
   </script>
-  <script type="text/babel" data-type="module" src="initialize.js"></script>
-  <!-- components -->
-  <script type="text/babel" data-type="module" src="AudioPlayer.jsx"></script>
-  <script type="text/babel" data-type="module" src="PdfViewer.jsx"></script>
-  <script type="text/babel" data-type="module" src="VideoPlayer.jsx"></script>
-  <!-- entry -->
-  <script type="text/babel" data-type="module" src="App.jsx"></script>
+  <script src="App.jsx"></script>
 </html>

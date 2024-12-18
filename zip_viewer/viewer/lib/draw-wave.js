@@ -46,4 +46,4 @@ const drawWave = async (audioBuffer, waveformCanvas) => {
   draw(1)
 }
 
-module.exports = drawWave
+export default drawWave
