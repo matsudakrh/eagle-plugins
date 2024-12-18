@@ -19,7 +19,7 @@ import {
 import { useKey } from 'react-use'
 import { fileTypeFromBuffer } from 'file-type'
 import store from './store.js'
-import { setStructure, setCurrentDirectory } from './directory-store.js'
+import { setStructure, setCurrentDirectory, setCurrentHoverEntry } from './directory-store.js'
 const {
   findObjectByCondition,
 } = require('./lib/zip-tree.js')
@@ -54,6 +54,7 @@ const ListThumbnail = memo(({
   onOpenDirectory,
 }) => {
   const ref = useRef(undefined)
+  const dispatch = useDispatch()
   // IntersectionObserverでlazyロードするため初期画像が最低限の高さを与える役割を兼ねる
   const [src, setSrc] = useState('./resources/spin.svg')
   const [fileType, setFileType] = useState()
@@ -231,10 +232,18 @@ const ListThumbnail = memo(({
   }
 
   return (
-    <div ref={ref} onDoubleClick={handleDbClick}>
+    <div
+      className="list-thumbnail"
+      ref={ref}
+      onDoubleClick={handleDbClick}
+      onMouseOver={() =>
+        dispatch(setCurrentHoverEntry(entry.encodedFileName)
+      )}
+      onPointerLeave={() => dispatch(setCurrentHoverEntry(null))}
+    >
       <div>
         {src.startsWith('blob')
-          ? <div style={{ padding: '4px', border: '1px solid #fff' }} ><img src={src} style={{ maxWidth: '100%' }} alt="" /></div>
+          ? <div style={{ padding: '4px', border: '1px solid #fff' }} ><img src={src} style={{ maxWidth: '100%', maxHeight: '100%' }} alt="" /></div>
           : <img style={gridStyle.img} onContextMenu={handleContextMenu} src={src} alt="" />
         }
       </div>
@@ -500,7 +509,7 @@ const Preview = memo(({ entries }) => {
     width: '100vw',
     height: '100vh',
     display: 'grid',
-    gridTemplateRows: 'min-content 1fr',
+    gridTemplateRows: 'min-content 1fr min-content',
   }}>
     <header style={{
       display: 'flex',
@@ -529,10 +538,26 @@ const Preview = memo(({ entries }) => {
   </div>
 })
 
+const EntriesFooter = () => {
+  const currentHoverEntryName = useSelector(state => state.directory.currentHoverEntryName)
+
+  return <div
+    style={{
+      borderTop: '1px solid #333',
+      padding: '4px',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis'
+  }}
+  >
+    {currentHoverEntryName ? currentHoverEntryName : '-'}
+  </div>
+}
+
 const Entries = memo(({ entries }) => {
   const structure = useSelector((state) => state.directory.structure)
   const currentDirectory = useSelector((state) => state.directory.currentDirectory)
-  const dispath = useDispatch()
+  const dispatch = useDispatch()
   const [visibleEntries, setVisibleEntries] = useState([])
 
   const parentDirectory = useMemo(() => {
@@ -577,11 +602,11 @@ const Entries = memo(({ entries }) => {
       return
     }
 
-    dispath(setCurrentDirectory(structure))
+    dispatch(setCurrentDirectory(structure))
   }, [structure])
 
   const handleOpenDirectory = useCallback((dir) => {
-    dispath(setCurrentDirectory(dir))
+    dispatch(setCurrentDirectory(dir))
   }, [])
 
   const handleBack = useCallback(() => {
@@ -597,10 +622,14 @@ const Entries = memo(({ entries }) => {
       })
     })
 
-    dispath(setCurrentDirectory(dir))
+    dispatch(setCurrentDirectory(dir))
   }, [currentDirectory])
 
-  return <div>
+  return <div style={{
+    height: '100vh',
+    display: 'grid',
+    gridTemplateRows: 'min-content 1fr min-content',
+  }}>
     <div>
       {parentDirectory ? <span onClick={handleBack}>
         前のフォルダに戻る
@@ -626,7 +655,15 @@ const Entries = memo(({ entries }) => {
             />
           }
 
-          return <div key={entry.$_name} onDoubleClick={() => handleOpenDirectory(entry)}>
+          return <div
+            key={entry.$_name}
+            className="dir-thumb"
+            onDoubleClick={() => handleOpenDirectory(entry)}
+            onMouseOver={() =>
+              dispatch(setCurrentHoverEntry(entry.$_fullpath)
+              )}
+            onPointerLeave={() => dispatch(setCurrentHoverEntry(null))}
+          >
             <div>
               <img style={gridStyle.img} src="./resources/kkrn_icon_folder_2.png" alt="" />
             </div>
@@ -635,6 +672,7 @@ const Entries = memo(({ entries }) => {
         })
       }
     </div>
+    <EntriesFooter />
   </div>
 })
 

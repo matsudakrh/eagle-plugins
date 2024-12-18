@@ -4,12 +4,14 @@ const _ = require('lodash')
 const ActionTypes = {
   SET_STRUCTURE: 'SET_STRUCTURE',
   SET_CURRENT_DIRECTORY: 'SET_CURRENT_DIRECTORY',
+  CURRENT_HOVER_ENTRY: 'CURRENT_HOVER_ENTRY',
 }
 
 const initialState = {
   structure: {},
   entries: [],
   currentDirectory: null,
+  currentHoverEntryName: null,
 }
 
 export const setStructure = (entries => ({
@@ -23,6 +25,13 @@ export const setCurrentDirectory = (directory => ({
   type: ActionTypes.SET_CURRENT_DIRECTORY,
   payload: {
     directory,
+  }
+}))
+
+export const setCurrentHoverEntry = (name => ({
+  type: ActionTypes.CURRENT_HOVER_ENTRY,
+  payload: {
+    name
   }
 }))
 
@@ -41,6 +50,12 @@ const directoryStore = (state = initialState, action) => {
         currentDirectory: {
           ..._.cloneDeep(action.payload.directory),
         }
+      }
+      return state
+    case ActionTypes.CURRENT_HOVER_ENTRY:
+      state = {
+        ...state,
+        currentHoverEntryName: action.payload.name,
       }
       return state
     default:

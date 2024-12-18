@@ -29,6 +29,7 @@ function setFolderStructure(entries) {
           currentLevel[part] = {
             $_name: part,
             $_uuid: window.crypto.randomUUID(),
+            $_fullpath: entry.encodedFileName
           } // フォルダとして追加
         }
       }

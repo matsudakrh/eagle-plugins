@@ -4,9 +4,8 @@ const styles = {
     images: {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-      gap: '24px',
+      gap: '8px',
       maxWidth: '100vw',
-      maxHeight: '100vh',
       overflow: 'auto',
       padding: '24px',
     },
