@@ -4,6 +4,7 @@ const styles = {
     images: {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+      gridTemplateRows: ' repeat(auto-fill, minmax(min-content, 300px))',
       gap: '8px',
       maxWidth: '100vw',
       overflow: 'auto',

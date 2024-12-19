@@ -7,26 +7,10 @@ import folderIcon from '../resources/kkrn_icon_folder_2.png'
 import styles from '../styles'
 import yauzl from 'yauzl'
 import ListThumbnail from '../comopnents/ListThumbnail'
+import EntriesFooter from '../comopnents/EntriesFooter'
 
 const { Entry } = yauzl
 const { gridStyle } = styles
-
-const EntriesFooter = () => {
-  const currentHoverEntryName = useSelector(state => state.directory.currentHoverEntryName)
-
-  return <div
-    style={{
-      borderTop: '1px solid #333',
-      padding: '4px',
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis'
-    }}
-  >
-    {currentHoverEntryName ? currentHoverEntryName : '-'}
-  </div>
-}
-
 
 const Entries = memo(({ entries }) => {
   const structure = useSelector((state) => state.directory.structure)
@@ -135,7 +119,7 @@ const Entries = memo(({ entries }) => {
             onDoubleClick={() => handleOpenDirectory(entry)}
             onMouseOver={() =>
               dispatch(setCurrentHoverEntry(entry.$_fullpath)
-              )}
+            )}
             onPointerLeave={() => dispatch(setCurrentHoverEntry(null))}
           >
             <div>
