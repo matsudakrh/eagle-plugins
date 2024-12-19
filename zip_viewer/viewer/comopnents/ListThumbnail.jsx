@@ -99,9 +99,9 @@ const ListThumbnail = memo(({
     }
     const handler = ([intersection]) => {
       if (intersection.isIntersecting) {
+        observer.disconnect()
         if (entry.encodedFileName.endsWith('/')) {
           setSrc(folderIcon)
-          observer.disconnect()
           return
         }
 
@@ -134,7 +134,6 @@ const ListThumbnail = memo(({
 
                   if (fileType.mime.startsWith('audio/')) {
                     setSrc(audioIcon)
-                    observer.disconnect()
                     return
                   }
 
@@ -164,14 +163,12 @@ const ListThumbnail = memo(({
 
               canvas.toBlob((blob) => {
                 setSrc(URL.createObjectURL(blob))
-                observer.disconnect()
               })
 
               return
             }
             resizeThumbnail(buffer, (buffer) => {
               setSrc(`data:${_fileType.mime};base64,${buffer.toString('base64')}`)
-              observer.disconnect()
             })
           })
         })
@@ -184,6 +181,8 @@ const ListThumbnail = memo(({
       if (src.startsWith('blob')) {
         URL.revokeObjectURL(src)
       }
+
+      observer.disconnect()
     }
   }, [])
 
