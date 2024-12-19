@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit'
 import directoryStore from './directory-store.js'
 
-const index = configureStore({
+const store = configureStore({
   reducer: {
     directory: directoryStore,
   },
 })
 
-export default index
+export default store

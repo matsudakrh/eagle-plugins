@@ -11,7 +11,7 @@ import {
   HashRouter,
 } from 'react-router-dom'
 import yauzl from 'yauzl'
-import index from './store'
+import store from './store'
 import { setStructure } from './store/directory-store.js'
 import Preview from './pages/Preview'
 import Entries from './pages/Entries'
@@ -97,7 +97,7 @@ if (window.createdEaglePlugin) {
   window.setTimeout(() => {
     const root = createRoot(document.getElementById('root'))
     root.render(
-      <Provider store={index}>
+      <Provider store={store}>
         <App />
       </Provider>
     )
@@ -106,7 +106,7 @@ if (window.createdEaglePlugin) {
   eagle.onPluginCreate(() => {
     const root = createRoot(document.getElementById('root'))
     root.render(
-      <Provider store={index}>
+      <Provider store={store}>
         <App />
       </Provider>
     )
