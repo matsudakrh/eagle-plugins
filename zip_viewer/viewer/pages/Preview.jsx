@@ -1,8 +1,9 @@
 import React, { memo, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useKey } from 'react-use'
-import resizeThumbnail from '../lib/resize-thumbnail'
 import * as FileType from 'file-type'
+import fs from 'fs'
+import resizeThumbnail from '../lib/resize-thumbnail'
 import charEncode from '../lib/char-encode'
 import PdfViewer from '../comopnents/PdfViewer'
 import AudioPlayer from '../comopnents/AudioPlayer'
@@ -113,7 +114,7 @@ const Preview = memo(({ entries }) => {
               .promises
               .writeFile(
                 filePath,
-                buffer.toString('base64').replace('data:' + fileType.mime + ';base64,', ''),
+                buffer.toString('base64'),
                 { encoding: 'base64' }
               )
               .then(() => {
@@ -188,6 +189,7 @@ const Preview = memo(({ entries }) => {
 
           if (fileType.mime.startsWith('image/')) {
             setImgSrc(`data:${fileType.mime};base64,${binary.toString('base64')}`)
+            setBuffer(binary)
             return
           }
 
