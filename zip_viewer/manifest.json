@@ -16,7 +16,7 @@
                 "size": 400
             },
             "viewer": {
-                "path": "dist/zip.html"
+                "path": "dist/index.html"
             }
         }
     }
