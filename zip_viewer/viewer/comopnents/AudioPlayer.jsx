@@ -196,8 +196,8 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
   }
 
   return <div style={{ display: 'grid', gridTemplateRows: '1fr 80px', height: '100%' }}>
-    <div onContextMenu={onContextMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <img src={thumb} alt="" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+    <div onContextMenu={onContextMenu} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+      <img src={thumb} alt="" style={{ maxWidth: '100%', maxHeight: '100%', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, margin: 'auto' }} />
     </div>
     <div style={{
       display: 'grid',

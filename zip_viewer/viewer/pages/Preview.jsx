@@ -97,35 +97,52 @@ const Preview = memo(({ entries }) => {
     ]
 
     if (fileType?.mime.startsWith('image')) {
+      const handleClick = async (size) => {
+        if (!fileType || !fileType.mime.startsWith('image/')) {
+          alert('画像ではないファイルは設定出来ません')
+          return
+        }
+
+        resizeThumbnail(buffer, async (buffer) => {
+          let item = (await window.eagle.item.getSelected())[0]
+          const tmpPath = eagle.os.tmpdir()
+          const filePath = `${tmpPath}/${words[words.length - 1]}`
+          fs
+            .promises
+            .writeFile(
+              filePath,
+              buffer.toString('base64'),
+              { encoding: 'base64' }
+            )
+            .then(() => {
+              item.setCustomThumbnail(filePath).then((result) => {
+                console.log('result =>  ', result)
+              })
+            }).catch((result) => {
+            console.log(result)
+          })
+        }, { width: size })
+      }
       items.push(      {
         id: 'thumbnail',
         label: 'サムネイルに設定',
-        click: async () => {
-          if (!fileType || !fileType.mime.startsWith('image/')) {
-            alert('画像ではないファイルは設定出来ません')
-            return
-          }
-
-          resizeThumbnail(buffer, async (buffer) => {
-            let item = (await window.eagle.item.getSelected())[0]
-            const tmpPath = eagle.os.tmpdir()
-            const filePath = `${tmpPath}/${words[words.length - 1]}`
-            fs
-              .promises
-              .writeFile(
-                filePath,
-                buffer.toString('base64'),
-                { encoding: 'base64' }
-              )
-              .then(() => {
-                item.setCustomThumbnail(filePath).then((result) => {
-                  console.log('result =>  ', result)
-                })
-              }).catch((result) => {
-              console.log(result)
-            })
-          })
-        }
+        submenu: [
+          {
+            id: 'small',
+            label: '小',
+            click: () => handleClick(400),
+          },
+          {
+            id: 'middle',
+            label: '中',
+            click: () => handleClick(700),
+          },
+          {
+            id: 'large',
+            label: '大',
+            click: () => handleClick(1000),
+          },
+        ],
       })
     }
 
