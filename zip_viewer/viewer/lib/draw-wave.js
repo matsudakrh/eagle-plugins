@@ -1,4 +1,12 @@
 
+const waitTime = (time = 4) => {
+  return new Promise((resolve, reject) => {
+    return setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
+
 const drawWave = async (audioBuffer, waveformCanvas) => {
   if (!audioBuffer) return
 
@@ -35,6 +43,9 @@ const drawWave = async (audioBuffer, waveformCanvas) => {
 
       canvasContext.lineTo(i, yMin)
       canvasContext.lineTo(i, yMax)
+      if (i % 20 === 0) {
+        await waitTime()
+      }
     }
 
     canvasContext.strokeStyle = color

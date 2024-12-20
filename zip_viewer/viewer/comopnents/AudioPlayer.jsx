@@ -79,6 +79,9 @@ const SeekBar = ({ audioBuffer, audio }) => {
   }, [canvas, currentPosition, isDragging, audioBuffer, currentTime])
 
   const handlePointerDown = (e) => {
+    if (!audioBuffer) {
+      return
+    }
     clearTimeout(timer)
     setIsDragging(true)
     const bounding = canvas.current.getBoundingClientRect()
