@@ -10,6 +10,7 @@ import charEncode from '../lib/char-encode'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import { setCurrentHoverEntry } from '../store/directory-store'
 import styles from '../styles'
+import { MetaKeys } from '../lib/zip-tree'
 
 const { gridStyle } = styles
 
@@ -193,7 +194,7 @@ const ListThumbnail = memo(({
     }
     navigate(`/preview`, {
       state: {
-        index
+        fullpath: entry.encodedFileName
       },
       replace: false,
     })

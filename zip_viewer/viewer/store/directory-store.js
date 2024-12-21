@@ -9,7 +9,6 @@ const ActionTypes = {
 
 const initialState = {
   structure: {},
-  entries: [],
   currentDirectory: null,
   currentHoverEntryName: null,
 }

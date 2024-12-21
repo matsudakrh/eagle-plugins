@@ -14,10 +14,10 @@ const PreviewHeader = ({ name, onBack, onPrev, onNext }) => {
       {name}
     </div>
     <div>
-      <button onClick={onPrev}>
+      <button onClick={onPrev} disabled={!onPrev}>
         前のファイル
       </button>
-      <button onClick={onNext}>
+      <button onClick={onNext} disabled={!onNext}>
         次のファイル
       </button>
     </div>

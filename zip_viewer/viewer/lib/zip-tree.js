@@ -2,6 +2,11 @@ import charEncode from './char-encode'
 import yauzl from 'yauzl'
 const  { Entry } = yauzl
 
+export const MetaKeys = {
+  NAME: '$_name',
+  UUID: '$_uuid',
+}
+
 const ignoreNames = [
   '__MACOSX',
   'Thumbs.db',
@@ -23,13 +28,11 @@ function setFolderStructure(entries) {
         }
         // 最後の部分がファイルの場合はファイルとして登録
         if (index === pathParts.length - 1 && !entry.isDirectory) {
-          entry.$_uuid = window.crypto.randomUUID()
           currentLevel[part] = entry.$_uuid
         } else {
           currentLevel[part] = {
             $_name: part,
-            $_uuid: window.crypto.randomUUID(),
-            $_fullpath: entry.encodedFileName
+            $_uuid: entry[MetaKeys.UUID],
           } // フォルダとして追加
         }
       }

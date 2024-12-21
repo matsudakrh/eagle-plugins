@@ -10,8 +10,14 @@ import AudioPlayer from '../comopnents/AudioPlayer'
 import VideoPlayer from '../comopnents/VideoPlayer'
 import spinIcon from '../resources/spin.svg'
 import PreviewHeader from '../comopnents/PreviewHeader'
+import { useDispatch, useSelector } from 'react-redux'
+import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
+import { setCurrentDirectory } from '../store/directory-store'
 
 const Preview = memo(({ entries }) => {
+  const dispatch = useDispatch()
+  const structure = useSelector(state => state.directory.structure)
+  const currentDirectory = useSelector(state => state.directory.currentDirectory)
   const location = useLocation()
   const [buffer, setBuffer] = useState()
   const [imgSrc, setImgSrc] = useState(spinIcon)
@@ -19,15 +25,41 @@ const Preview = memo(({ entries }) => {
   const navigate = useNavigate()
   const [fileType, setFileType] = useState()
   const entry = useMemo(() => {
-    //　ファイルを閉じてもプレビューへの遷移が残っているケースがあったため暫定対応
-    if (!(Number.isInteger(location.state?.index))) {
-      navigate('/', {
-        replace: true
-      })
+    if (location.state?.fullpath) {
+      return entries.find(entry => entry.encodedFileName === location.state.fullpath)
+    }
+  }, [entries, location.state?.fullpath])
+
+  useEffect(() => {
+    // リロードした場合にcurrentDirectoryを見失うのを修正
+    if (currentDirectory || !structure || !entry) {
       return
     }
-    return entries[location.state.index]
-  }, [entries, location.state?.index])
+    const dir = findObjectByCondition(structure, (obj) => {
+      return Object.values(obj).includes(entry[MetaKeys.UUID])
+    })
+    dispatch(setCurrentDirectory(dir))
+  }, [currentDirectory, structure, entry])
+
+  const currentDirEntries = useMemo(() => {
+    if (!currentDirectory) {
+      return []
+    }
+
+    return entries.filter((entry) => {
+      return Object.values(currentDirectory).includes(entry[MetaKeys.UUID]) && !entry.isDirectory
+    })
+  }, [entries, currentDirectory])
+
+  const preEntry = useMemo(() => {
+    const index = currentDirEntries.findIndex(a => a.encodedFileName ===  entry.encodedFileName)
+    return currentDirEntries[index - 1]
+  },  [currentDirEntries, entry])
+  const nextEntry = useMemo(() => {
+    const index = currentDirEntries.findIndex(a => a.encodedFileName ===  entry.encodedFileName)
+    return currentDirEntries[index + 1]
+  }, [currentDirEntries, entry])
+
   const words = useMemo(() => {
     if (!entry) {
       return <div></div>
@@ -36,31 +68,32 @@ const Preview = memo(({ entries }) => {
   }, [entry])
 
   const handlePrev = () => {
-    if (location.state.index === 0) {
+    if (!preEntry) {
       return
     }
 
     navigate('/preview', {
       state: {
-        index: location.state.index - 1
+        fullpath: preEntry.encodedFileName,
       },
       replace: true,
     })
   }
-  useKey('ArrowLeft', handlePrev, {}, [location.state])
+  useKey('ArrowLeft', handlePrev, {}, [preEntry])
 
   const handleNext = () => {
-    if (location.state.index === entries.length - 1) {
+    if (!nextEntry) {
       return
     }
+
     navigate('/preview', {
       state: {
-        index: location.state.index + 1
+        fullpath: nextEntry.encodedFileName,
       },
       replace: true,
     })
   }
-  useKey('ArrowRight', handleNext, {}, [location.state, entries])
+  useKey('ArrowRight', handleNext, {}, [nextEntry])
 
   const handleBack = useCallback(() => {
     navigate(-1)
@@ -280,8 +313,8 @@ const Preview = memo(({ entries }) => {
       name={words[words.length - 1]}
       count={entries.length}
       onBack={handleBack}
-      onPrev={handlePrev}
-      onNext={handleNext}
+      onPrev={preEntry ? handlePrev : null}
+      onNext={nextEntry ? handleNext : null}
     />
     <div style={{ position: 'relative', overflow: 'auto' }}>
       {detailComponent()}

@@ -47,6 +47,7 @@ const App = memo(() => {
           entry.encodedFileName = charEncode(entry.fileNameRaw)
           entry.isDirectory = entry.encodedFileName.endsWith('/')
           entry.zipFile = zipFile
+          entry.$_uuid ??= window.crypto.randomUUID()
           entries.push(entry)
           zipFile.readEntry()
         })
@@ -67,8 +68,8 @@ const App = memo(() => {
             })
           })
 
-          setEntries(entries)
           dispatch(setStructure(entries))
+          setEntries(entries)
         })
       })
     })
