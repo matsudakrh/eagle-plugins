@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useState } from 'react'
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useKey } from 'react-use'
 import * as FileType from 'file-type'
@@ -9,6 +9,7 @@ import PdfViewer from '../comopnents/PdfViewer'
 import AudioPlayer from '../comopnents/AudioPlayer'
 import VideoPlayer from '../comopnents/VideoPlayer'
 import spinIcon from '../resources/spin.svg'
+import PreviewHeader from '../comopnents/PreviewHeader'
 
 const Preview = memo(({ entries }) => {
   const location = useLocation()
@@ -47,6 +48,7 @@ const Preview = memo(({ entries }) => {
     })
   }
   useKey('ArrowLeft', handlePrev, {}, [location.state])
+
   const handleNext = () => {
     if (location.state.index === entries.length - 1) {
       return
@@ -58,12 +60,12 @@ const Preview = memo(({ entries }) => {
       replace: true,
     })
   }
-  useKey('ArrowRight', handleNext, {}, [location.state])
+  useKey('ArrowRight', handleNext, {}, [location.state, entries])
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     navigate(-1)
-  }
-  useKey('Backspace', handleBack, {}, [])
+  }, [])
+  useKey('Backspace',  handleBack, {}, [])
 
   const handleContextMenu = () => {
     const items = [
@@ -212,12 +214,13 @@ const Preview = memo(({ entries }) => {
 
           if (fileType.mime === 'application/pdf') {
             setBuffer(binary)
+            return
           }
-          // setBuffer(chunks)
+
+          console.log('TODO: 各処理を行う')
         })
       })
     }
-    console.log('各処理を行う')
   }, [entry, fileType])
 
   const detailComponent = () => {
@@ -273,27 +276,13 @@ const Preview = memo(({ entries }) => {
     display: 'grid',
     gridTemplateRows: 'min-content 1fr min-content',
   }}>
-    <header style={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      padding: '8px',
-      borderBottom: '',
-    }}>
-      <div>
-        <button onClick={handleBack}>
-          戻る
-        </button>
-        {words[words.length - 1]}
-      </div>
-      <div>
-        <button onClick={handlePrev}>
-          前のファイル
-        </button>
-        <button onClick={handleNext}>
-          次のファイル
-        </button>
-      </div>
-    </header>
+    <PreviewHeader
+      name={words[words.length - 1]}
+      count={entries.length}
+      onBack={handleBack}
+      onPrev={handlePrev}
+      onNext={handleNext}
+    />
     <div style={{ position: 'relative', overflow: 'auto' }}>
       {detailComponent()}
     </div>
