@@ -117,12 +117,23 @@ const ListThumbnail = memo(({
           let _fileType
           readStream.on('data', (chunk) => {
             chunks.push(chunk)
-            if (isImage !== null || _fileType) {
+
+            if (isImage === true) {
               return
             }
+
             if (entry.encodedFileName.endsWith('txt')) {
               return
             }
+
+            if (!_fileType?.mime?.startsWith('image/')) {
+              if (chunks.length > 2) {
+                // 一定量データを読み込んでも判別出来ていない時は終わる
+                readStream.destroy()
+                return
+              }
+            }
+
             FileType.fromBuffer(Buffer.concat(chunks)).then((fileType) => {
               if (_fileType) {
                 return
@@ -130,18 +141,12 @@ const ListThumbnail = memo(({
               if (fileType) {
                 _fileType = fileType
                 setFileType(fileType)
-                if (!fileType.mime.startsWith('image/')) {
-                  readStream.destroy()
 
-                  if (fileType.mime.startsWith('audio/')) {
-                    setSrc(audioIcon)
-                    return
-                  }
+                isImage = _fileType.mime?.startsWith('image/')
 
-                  console.log('TODO: アイコン設定')
+                if (fileType.mime.startsWith('audio/')) {
+                  setSrc(audioIcon)
                 }
-              } else {
-                console.log('TODO: アイコン設定')
               }
             })
           })
