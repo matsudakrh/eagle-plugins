@@ -177,6 +177,11 @@ const Preview = memo(({ entries }) => {
             label: '大',
             click: () => handleClick(1000),
           },
+          {
+            id: 'original',
+            label: 'オリジナル',
+            click: () => handleClick(null),
+          },
         ],
       })
     }
