@@ -1,18 +1,18 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import { useKey } from 'react-use'
 import * as FileType from 'file-type'
 import fs from 'fs'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import charEncode from '../lib/char-encode'
+import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
+import { setCurrentDirectory } from '../store/directory-store'
 import PdfViewer from '../comopnents/PdfViewer'
 import AudioPlayer from '../comopnents/AudioPlayer'
 import VideoPlayer from '../comopnents/VideoPlayer'
-import spinIcon from '../resources/spin.svg'
 import PreviewHeader from '../comopnents/PreviewHeader'
-import { useDispatch, useSelector } from 'react-redux'
-import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
-import { setCurrentDirectory } from '../store/directory-store'
+import spinIcon from '../resources/spin.svg'
 
 const Preview = memo(({ entries }) => {
   const dispatch = useDispatch()
@@ -296,7 +296,7 @@ const Preview = memo(({ entries }) => {
     }
 
     if (fileType?.mime.startsWith('audio/')) {
-      return <AudioPlayer entry={entry} onContextMenu={handleContextMenu} />
+      return <AudioPlayer key={entry.encodedFileName} entry={entry} onContextMenu={handleContextMenu} />
     }
 
     if (fileType?.mime.startsWith('video/')) {

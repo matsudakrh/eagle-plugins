@@ -32,6 +32,7 @@ const drawWave = async (audioBuffer, waveformCanvas) => {
     canvasContext.moveTo(0, amp)
 
     // 波形データを描画
+    // TODO: ウィンドウサイズの都合などでwidthが小さい（stepが大きい）とMaximum call stack size exceededが発生する
     for (let i = 0; i < width; i++) {
       const min = Math.min(...rawData.slice(i * step, (i + 1) * step))
       const max = Math.max(...rawData.slice(i * step, (i + 1) * step))

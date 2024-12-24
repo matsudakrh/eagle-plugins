@@ -13,14 +13,10 @@ const SeekBar = ({ audioBuffer, audio }) => {
     if (!audio) {
       return
     }
-    // シームレスな描画をするなら audio.addEventListener('timeupdate' を使う
-    const timer = setInterval(() => {
-      setCurrentTime(audio.currentTime)
-    }, 1000)
 
-    return () => {
-      clearInterval(timer)
-    }
+    audio.addEventListener('timeupdate', () => {
+      setCurrentTime(audio.currentTime)
+    })
   }, [audio])
 
   useEffect(() => {

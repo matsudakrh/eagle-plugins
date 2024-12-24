@@ -11,11 +11,12 @@ import {
   HashRouter,
 } from 'react-router-dom'
 import yauzl from 'yauzl'
+import charEncode from './lib/char-encode'
 import store from './store'
 import { setStructure } from './store/directory-store.js'
+import { setIdentify } from './store/root'
 import Preview from './pages/Preview'
 import Entries from './pages/Entries'
-import charEncode from './lib/char-encode'
 
 const App = memo(() => {
   const [entries, setEntries] = useState([])
@@ -23,16 +24,8 @@ const App = memo(() => {
   useEffect(() => {
     let _file
     window.eagle.item.getSelected().then((selected) => {
-      if (selected.length > 1) {
-        return alert('一つのみ選択してください')
-      }
-      if (!selected.length) {
-        return alert('ファイルが選択されていません')
-      }
       const filePath = selected[0].filePath
-      if (!filePath.endsWith('zip')) {
-        return alert('Zipファイルを選択してください')
-      }
+      dispatch(setIdentify(selected[0].id))
 
       yauzl.open(filePath, { autoClose: false, lazyEntries: true }, (err, zipFile) => {
         if (err) {

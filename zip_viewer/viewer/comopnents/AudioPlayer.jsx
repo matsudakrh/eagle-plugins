@@ -1,13 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react'
 import { useSelector } from 'react-redux'
-import iconSpin from '../resources/spin.svg'
 import VolumeBar from './AudioPlayer/VolumeBar'
 import SeekBar from './AudioPlayer/SeekBar'
 import CurrentTime from './AudioPlayer/CurrentTime'
+import { DBConfig } from '../db/config'
+import { putAudioObject } from '../db/stores/audio-store'
+import iconSpin from '../resources/spin.svg'
 
 const AudioPlayer = ({ entry, onContextMenu }) => {
   const audio = useRef(null)
-  const volume = useSelector(root => root.audio.volume)
+  const volume = useSelector(state => state.audio.volume)
+  const identify = useSelector(state => state.root.identify)
   const [src, setSrc] = useState()
   const [thumb, setThumb] = useState()
   const [audioBuffer, setAudioBuffer] = useState()
@@ -15,6 +18,57 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
   const audioContext = useMemo(() => {
     return new window.AudioContext()
   }, [])
+
+  useLayoutEffect(() => {
+    let db
+    const openReq = indexedDB.open(window.eagle.plugin.manifest.id, DBConfig.VERSION)
+
+    openReq.onsuccess = (event)=> {
+      db = event.target.result
+      const transaction = db.transaction(DBConfig.STORE_NAMES.Audio, 'readonly')
+      const store = transaction.objectStore(DBConfig.STORE_NAMES.Audio)
+      const getReq = store.get([identify, entry.encodedFileName])
+
+      getReq.onsuccess = (event) => {
+        if (getReq.result) {
+          audio.current.currentTime = event.target.result.lastTime
+        }
+      }
+      getReq.onerror = (event) => {
+        console.log(event)
+      }
+      transaction.oncomplete = () => {
+        console.log('transaction complete')
+      }
+    }
+
+    const putData = () => {
+      const currentTime = audio.current.currentTime
+
+      const putReq = putAudioObject(db, {
+        filePath: entry.encodedFileName,
+        itemId: identify,
+        lastTime: currentTime - 0.3,
+      })
+
+      putReq.onsuccess = () => {
+        console.log('put data success.')
+      }
+
+      putReq.onerror = (event) => {
+        console.log(event)
+      }
+
+      db.close()
+    }
+
+    window.addEventListener('beforeunload', putData)
+
+    return () => {
+      window.removeEventListener('beforeunload', putData)
+      putData()
+    }
+  }, [entry])
 
   useEffect(() => {
     if (!audio.current) {
