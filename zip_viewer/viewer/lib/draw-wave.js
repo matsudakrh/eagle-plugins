@@ -25,15 +25,14 @@ const drawWave = async (audioBuffer, waveformCanvas) => {
     const rawData = audioBuffer.getChannelData(channel)
 
     // // 波形データを取得する
-    const step = Math.ceil(rawData.length / width)
+    const step = Math.ceil(rawData.length / (width * 10))
     const amp = height / 2
 
     canvasContext.beginPath()
     canvasContext.moveTo(0, amp)
 
     // 波形データを描画
-    // TODO: ウィンドウサイズの都合などでwidthが小さい（stepが大きい）とMaximum call stack size exceededが発生する
-    for (let i = 0; i < width; i++) {
+    for (let i = 0; i < width * 10; i++) {
       const min = Math.min(...rawData.slice(i * step, (i + 1) * step))
       const max = Math.max(...rawData.slice(i * step, (i + 1) * step))
 
@@ -42,9 +41,9 @@ const drawWave = async (audioBuffer, waveformCanvas) => {
       const yMin = channel === 0 ?  ((min) * amp) + amp : amp
       const yMax = channel === 1 ? ((max) * amp) + amp : amp
 
-      canvasContext.lineTo(i, yMin)
-      canvasContext.lineTo(i, yMax)
-      if (i % 20 === 0) {
+      canvasContext.lineTo(i / 10, yMin)
+      canvasContext.lineTo(i / 10, yMax)
+      if (i % 10 === 0) {
         await waitTime()
       }
     }
