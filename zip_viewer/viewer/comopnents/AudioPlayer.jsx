@@ -8,7 +8,7 @@ import { putAudioObject } from '../db/stores/audio-store'
 import iconSpin from '../resources/spin.svg'
 
 const AudioPlayer = ({ entry, onContextMenu }) => {
-  const audio = useRef(null)
+  const audioRef = useRef(null)
   const volume = useSelector(state => state.audio.volume)
   const identify = useSelector(state => state.root.identify)
   const [src, setSrc] = useState()
@@ -31,7 +31,7 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
 
       getReq.onsuccess = (event) => {
         if (getReq.result) {
-          audio.current.currentTime = event.target.result.lastTime
+          audioRef.current.currentTime = event.target.result.lastTime
         }
       }
       getReq.onerror = (event) => {
@@ -43,7 +43,7 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
     }
 
     const putData = () => {
-      const currentTime = audio.current.currentTime
+      const currentTime = audioRef.current.currentTime
 
       const putReq = putAudioObject(db, {
         filePath: entry.encodedFileName,
@@ -71,10 +71,10 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
   }, [entry])
 
   useEffect(() => {
-    if (!audio.current) {
+    if (!audioRef.current) {
       return
     }
-    audio.current.volume = volume
+    audioRef.current.volume = volume
   }, [volume])
 
   useEffect(() => {
@@ -83,7 +83,7 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
     }
     URL.revokeObjectURL(src)
     setSrc(null)
-    audio.current?.pause()
+    audioRef.current?.pause()
 
     entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
       const chunks = []
@@ -117,14 +117,14 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
   }, [])
 
   const handleClick = () => {
-    if (!audio.current) {
+    if (!audioRef.current) {
       return
     }
 
-    if (audio.current.paused) {
-      audio.current.play()
+    if (audioRef.current.paused) {
+      audioRef.current.play()
     } else {
-      audio.current.pause()
+      audioRef.current.pause()
     }
   }
 
@@ -162,17 +162,17 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
         {isPlaying ? <span className="video_pause"></span> : <span className="video_play"></span>}
       </div>
       <div style={{ padding: '8px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-        <CurrentTime audio={audio.current} />
+        <CurrentTime audio={audioRef.current} />
       </div>
       <div style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <VolumeBar />
       </div>
       <div>
-        <SeekBar audio={audio.current} audioBuffer={audioBuffer} />
+        <SeekBar audio={audioRef.current} audioBuffer={audioBuffer} />
       </div>
     </div>
     <audio
-      ref={audio}
+      ref={audioRef}
       src={src}
       style={{ display: 'none' }}
       controls

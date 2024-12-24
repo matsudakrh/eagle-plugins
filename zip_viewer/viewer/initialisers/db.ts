@@ -1,5 +1,6 @@
 import { DBConfig } from '../db/config'
 import createAudioStore from '../db/stores/audio-store'
+import createVideoStore from '../db/stores/video-store'
 
 // @ts-ignore
 window.eagle.onPluginCreate((plugin: any) => {
@@ -16,6 +17,9 @@ window.eagle.onPluginCreate((plugin: any) => {
 
     if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Audio)) {
       createAudioStore(db)
+    }
+    if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Video)) {
+      createVideoStore(db)
     }
   }
   openReq.onsuccess = (event)=> {

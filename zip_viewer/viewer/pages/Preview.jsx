@@ -300,7 +300,7 @@ const Preview = memo(({ entries }) => {
     }
 
     if (fileType?.mime.startsWith('video/')) {
-      return <VideoPlayer entry={entry} onContextMenu={handleContextMenu} />
+      return <VideoPlayer key={entry.encodedFileName} entry={entry} onContextMenu={handleContextMenu} />
     }
 
     return <div>
