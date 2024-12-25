@@ -5,6 +5,7 @@ const  { Entry } = yauzl
 export const MetaKeys = {
   NAME: '$_name',
   UUID: '$_uuid',
+  FULL_PATH: '$_fullpath',
 }
 
 const ignoreNames = [
@@ -33,6 +34,7 @@ function setFolderStructure(entries) {
           currentLevel[part] = {
             $_name: part,
             $_uuid: entry[MetaKeys.UUID],
+            $_fullpath: entry.encodedFileName,
           } // フォルダとして追加
         }
       }

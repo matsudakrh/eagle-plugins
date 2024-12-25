@@ -109,7 +109,7 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
     ></video>
     <img
       style={{
-        display: src ? 'block' : 'none',
+        display: src ? 'none' : 'block',
         position: 'absolute',
         top: 0,
         left: 0,

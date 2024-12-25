@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { findObjectByCondition } from '../lib/zip-tree'
+import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
 import _ from 'lodash'
 import { setCurrentDirectory, setCurrentHoverEntry } from '../store/directory-store'
 import folderIcon from '../resources/kkrn_icon_folder_2.png'
@@ -76,7 +76,7 @@ const Entries = memo(({ entries }) => {
       const dirs = children.filter(child => typeof child === 'object' && child !== null)
 
       return dirs.some((value) => {
-        return value.$_uuid === currentDirectory.$_uuid
+        return value[MetaKeys.UUID] === currentDirectory[MetaKeys.UUID]
       })
     })
 
@@ -96,7 +96,7 @@ const Entries = memo(({ entries }) => {
         whiteSpace: 'pre-wrap',
         paddingLeft: '12px',
       }}>
-       {currentDirectory?.$_name ? `「${currentDirectory.$_name}」` : null}
+       {currentDirectory?.[MetaKeys.NAME] ? `「${currentDirectory[MetaKeys.NAME]}」` : null}
       </span>
     </div>
     <div id="images" style={gridStyle.images}>
@@ -106,7 +106,7 @@ const Entries = memo(({ entries }) => {
 
           if (isEntry) {
             return <ListThumbnail
-              key={entry.encodedFileName}
+              key={entry[MetaKeys.UUID]}
               entry={entry}
               index={entries.findIndex(e => entry === e)}
               onOpenDirectory={handleOpenDirectory}
@@ -114,11 +114,11 @@ const Entries = memo(({ entries }) => {
           }
 
           return <div
-            key={entry.$_name}
+            key={entry[MetaKeys.UUID]}
             className="dir-thumb"
             onDoubleClick={() => handleOpenDirectory(entry)}
             onMouseOver={() =>
-              dispatch(setCurrentHoverEntry(entry.$_fullpath)
+              dispatch(setCurrentHoverEntry(entry[MetaKeys.FULL_PATH])
             )}
             onPointerLeave={() => dispatch(setCurrentHoverEntry(null))}
           >
