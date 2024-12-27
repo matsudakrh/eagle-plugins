@@ -22,48 +22,49 @@ const App = memo(() => {
   const [entries, setEntries] = useState([])
   const dispatch = useDispatch()
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const filePath = urlParams.get('path')
+    const identify = urlParams.get('id')
+
     let _file
-    window.eagle.item.getSelected().then((selected) => {
-      const filePath = selected[0].filePath
-      dispatch(setIdentify(selected[0].id))
+    dispatch(setIdentify(identify))
 
-      yauzl.open(filePath, { autoClose: false, lazyEntries: true }, (err, zipFile) => {
-        if (err) {
-          console.error(err)
-          return
-        }
-        _file = zipFile
+    yauzl.open(filePath, { autoClose: false, lazyEntries: true }, (err, zipFile) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+      _file = zipFile
 
-        const entries = []
+      const entries = []
+      zipFile.readEntry()
+      zipFile.on('entry', (entry) => {
+        entry.encodedFileName = charEncode(entry.fileNameRaw)
+        entry.isDirectory = entry.encodedFileName.endsWith('/')
+        entry.zipFile = zipFile
+        entry.$_uuid ??= window.crypto.randomUUID()
+        entries.push(entry)
         zipFile.readEntry()
-        zipFile.on('entry', (entry) => {
-          entry.encodedFileName = charEncode(entry.fileNameRaw)
-          entry.isDirectory = entry.encodedFileName.endsWith('/')
-          entry.zipFile = zipFile
-          entry.$_uuid ??= window.crypto.randomUUID()
-          entries.push(entry)
-          zipFile.readEntry()
-        })
-        zipFile.on('end', () => {
-          entries.sort((a, b) => {
-            const aName = a.encodedFileName
-            const bName = b.encodedFileName
+      })
+      zipFile.on('end', () => {
+        entries.sort((a, b) => {
+          const aName = a.encodedFileName
+          const bName = b.encodedFileName
 
-            if (a.isDirectory && !b.isDirectory) {
-              return -1
-            } else if (!a.isDirectory && b.isDirectory) {
-              return 1
-            }
+          if (a.isDirectory && !b.isDirectory) {
+            return -1
+          } else if (!a.isDirectory && b.isDirectory) {
+            return 1
+          }
 
-            return aName.localeCompare(bName, 'ja', {
-              sensitivity: 'variant',
-              numeric: true,
-            })
+          return aName.localeCompare(bName, 'ja', {
+            sensitivity: 'variant',
+            numeric: true,
           })
-
-          dispatch(setStructure(entries))
-          setEntries(entries)
         })
+
+        dispatch(setStructure(entries))
+        setEntries(entries)
       })
     })
 
@@ -80,7 +81,7 @@ const App = memo(() => {
       <Route
         key="preview"
         path="/preview"
-        element={<Preview entries={entries}  />}
+        element={<Preview entries={entries} />}
       />
     </Routes>
   </HashRouter>)

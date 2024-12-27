@@ -30,8 +30,6 @@ const SeekBar = ({ audioBuffer, audio }) => {
     if (!canvas.current || !audioBuffer) {
       return
     }
-    const SelectStyle = getComputedStyle(document.body)
-    const color = String(SelectStyle.getPropertyValue('--color')).trim()
     const ctx = canvas.current.getContext('2d')
     const parentElement = canvas.current.closest('*:not(canvas)')
     const bounding =  parentElement.getBoundingClientRect()
@@ -41,8 +39,8 @@ const SeekBar = ({ audioBuffer, audio }) => {
     canvas.current.width = width
     canvas.current.height = height
     ctx.clearRect(0, 0, width, height)
-    ctx.lineWidth = 1
-    ctx.strokeStyle = color
+    ctx.lineWidth = 3
+    ctx.strokeStyle = 'rgba(160, 160, 160)'
     ctx.beginPath()
     ctx.moveTo(isDragging ? currentPosition : width * ratio, 0)
     ctx.lineTo(isDragging ? currentPosition : width * ratio, canvas.current.height)
