@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import drawWave from '../../lib/draw-wave'
 
-const SeekBar = ({ audioBuffer, audio }) => {
+const SeekBar: React.FC<{
+  audioBuffer: AudioBuffer
+  audio: HTMLAudioElement
+}> = ({ audioBuffer, audio }) => {
   const canvas = useRef(null)
   const waveCanvas = useRef(null)
   const [isDragging, setIsDragging] = useState(false)
   const [currentPosition, setCurrentPosition] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
-  const [timer, setTimer] = useState()
+  const [timer, setTimer] = useState<undefined | number>()
 
   useEffect(() => {
     if (!audio) {
@@ -67,7 +70,7 @@ const SeekBar = ({ audioBuffer, audio }) => {
       audio.currentTime = audioBuffer.duration * ratio
       setCurrentPosition(currentPosition)
 
-      setTimer(setTimeout(() => {
+      setTimer(window.setTimeout(() => {
         setIsDragging(false)
       }, 1000))
       document.removeEventListener('pointermove', handleMouseMove)

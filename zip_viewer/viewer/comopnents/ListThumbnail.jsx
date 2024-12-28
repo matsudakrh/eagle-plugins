@@ -1,26 +1,24 @@
 import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import * as FileType from 'file-type'
 import fs from 'fs'
-import spinIcon from '../resources/spin.svg'
-import { useNavigate } from 'react-router-dom'
-import folderIcon from '../resources/kkrn_icon_folder_2.png'
-import audioIcon from '../resources/icon_audio.png'
+import { useAppDispatch } from '../hooks/redux'
+import { setCurrentHoverEntry } from '../store/directory-store'
 import charEncode from '../lib/char-encode'
 import resizeThumbnail from '../lib/resize-thumbnail'
-import { setCurrentHoverEntry } from '../store/directory-store'
+import folderIcon from '../resources/kkrn_icon_folder_2.png'
+import audioIcon from '../resources/icon_audio.png'
 import styles from '../styles'
-import { MetaKeys } from '../lib/zip-tree'
+import spinIcon from '../resources/spin.svg'
 
 const { gridStyle } = styles
 
 const ListThumbnail = memo(({
   entry,
-  index,
   onOpenDirectory,
 }) => {
   const ref = useRef(undefined)
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   // IntersectionObserverでlazyロードするため初期画像が最低限の高さを与える役割を兼ねる
   const [src, setSrc] = useState(spinIcon)
   const [fileType, setFileType] = useState()

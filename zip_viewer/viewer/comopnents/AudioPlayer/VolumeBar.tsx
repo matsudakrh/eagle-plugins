@@ -1,10 +1,10 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { changeVolume } from '../../store/audio-store'
 import React from 'react'
+import { changeVolume } from '../../store/audio-store'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 
 const VolumeBar = () => {
-  const volume = useSelector(root => root.audio.volume)
-  const disoatch = useDispatch()
+  const volume = useAppSelector(root => root.audio.volume)
+  const disoatch = useAppDispatch()
 
   return (
     <input
@@ -14,10 +14,11 @@ const VolumeBar = () => {
       max="1"
       step="0.01"
       onChange={e => {
-        disoatch(changeVolume(e.target.value))
+        const value = Number.parseFloat(e.target.value)
+        disoatch(changeVolume(value))
         const activeColor = "#6dd5ff";
         const inactiveColor = "#dddddd";
-        const ratio = (e.target.value - e.target.min) / (e.target.max - e.target.min) * 100
+        const ratio = value * 100
         e.target.style.background = `linear-gradient(90deg, ${activeColor} ${ratio}%, ${inactiveColor} ${ratio}%)`
       }}
     />

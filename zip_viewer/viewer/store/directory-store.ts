@@ -1,6 +1,10 @@
-import { getFolderStructure } from '../lib/zip-tree'
-import _ from 'lodash'
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+interface DirectoryState {
+  structure: object
+  currentDirectory: null | object
+  currentHoverEntryName: null | string
+}
 
 const initialState = {
   structure: {},
@@ -12,13 +16,13 @@ const directorySlice = createSlice({
   name: 'directory',
   initialState,
   reducers: {
-    setStructure: (state, action) => {
+    setStructure: (state, action: PayloadAction<object>) => {
       state.structure = action.payload
     },
-    setCurrentDirectory: (state, action) => {
+    setCurrentDirectory: (state, action: PayloadAction<object>) => {
       state.currentDirectory = action.payload
     },
-    setCurrentHoverEntry: (state, action) => {
+    setCurrentHoverEntry: (state, action: PayloadAction<string>) => {
       state.currentHoverEntryName = action.payload
     },
   }

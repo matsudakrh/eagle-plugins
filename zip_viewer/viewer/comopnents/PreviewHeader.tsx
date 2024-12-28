@@ -1,6 +1,11 @@
 import React from 'react'
 
-const PreviewHeader = ({ name, onBack, onPrev, onNext }) => {
+const PreviewHeader: React.FC<{
+  name: string,
+  onBack: () => void,
+  onPrev: () => void,
+  onNext: () => void,
+}> = ({ name, onBack, onPrev, onNext }) => {
   return <header style={{
     display: 'flex',
     justifyContent: 'space-between',

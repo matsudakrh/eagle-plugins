@@ -1,9 +1,9 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
 import { useKey } from 'react-use'
 import * as FileType from 'file-type'
 import fs from 'fs'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import charEncode from '../lib/char-encode'
 import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
@@ -15,9 +15,9 @@ import PreviewHeader from '../comopnents/PreviewHeader'
 import spinIcon from '../resources/spin.svg'
 
 const Preview = memo(({ entries }) => {
-  const dispatch = useDispatch()
-  const structure = useSelector(state => state.directory.structure)
-  const currentDirectory = useSelector(state => state.directory.currentDirectory)
+  const dispatch = useAppDispatch()
+  const structure = useAppSelector(state => state.directory.structure)
+  const currentDirectory = useAppSelector(state => state.directory.currentDirectory)
   const location = useLocation()
   const [buffer, setBuffer] = useState()
   const [imgSrc, setImgSrc] = useState(spinIcon)

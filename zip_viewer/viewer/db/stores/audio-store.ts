@@ -8,7 +8,7 @@ const createAudioStore = (db: IDBDatabase) => {
   objectStore.createIndex('filePathItemIdIndex', ['itemId', 'filePath'], { unique: true })
 }
 
-type AudioObject = {
+export type AudioObject = {
   filePath: string
   itemId: string
   // 最後の再生位置

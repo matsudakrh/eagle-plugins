@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react'
-import { useSelector } from 'react-redux'
 import { DBConfig } from '../db/config'
 import { putAudioObject } from '../db/stores/audio-store'
+import { useAppSelector } from '../hooks/redux'
+import AppParameters from '../lib/app-parameters'
 import VolumeBar from './AudioPlayer/VolumeBar'
 import SeekBar from './AudioPlayer/SeekBar'
 import CurrentTime from './AudioPlayer/CurrentTime'
-import AppParameters from '../lib/app-parameters'
 import iconSpin from '../resources/spin.svg'
 
 const AudioPlayer = ({ entry, onContextMenu }) => {
   const audioRef = useRef(null)
-  const volume = useSelector(state => state.audio.volume)
+  const volume = useAppSelector(state => state.audio.volume)
   const [src, setSrc] = useState()
   const [thumb, setThumb] = useState()
   const [audioBuffer, setAudioBuffer] = useState()

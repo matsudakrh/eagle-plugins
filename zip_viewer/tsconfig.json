@@ -3,6 +3,7 @@
     "target": "ES6",  // または "ES2015" 以上
     "module": "ESNext",
     "moduleResolution": "node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "jsx": "react"
   }
 }

@@ -8,7 +8,7 @@ const createVideoStore = (db: IDBDatabase) => {
   objectStore.createIndex('filePathItemIdIndex', ['itemId', 'filePath'], { unique: true })
 }
 
-type VideoObject = {
+export type VideoObject = {
   filePath: string
   itemId: string
   // 最後の再生位置

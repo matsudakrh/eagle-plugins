@@ -3,25 +3,23 @@ import React, {
   useState,
   memo,
 } from 'react'
-import { Provider, useDispatch } from 'react-redux'
-import { createRoot } from 'react-dom/client'
 import {
   Route,
   Routes,
   HashRouter,
 } from 'react-router-dom'
 import yauzl from 'yauzl'
+import { useAppDispatch } from './hooks/redux'
 import AppParameters from './lib/app-parameters'
 import charEncode from './lib/char-encode'
-import store from './store'
+import { getFolderStructure } from './lib/zip-tree'
 import { setStructure } from './store/directory-store'
 import Preview from './pages/Preview'
 import Entries from './pages/Entries'
-import { getFolderStructure } from './lib/zip-tree'
 
 const App = memo(() => {
   const [entries, setEntries] = useState([])
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   useEffect(() => {
     let _file
 
@@ -83,23 +81,4 @@ const App = memo(() => {
   </HashRouter>)
 })
 
-if (window.createdEaglePlugin) {
-  /// trueなのにエラーが出るので対策
-  window.setTimeout(() => {
-    const root = createRoot(document.getElementById('root'))
-    root.render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    )
-  }, 200)
-} else {
-  eagle.onPluginCreate(() => {
-    const root = createRoot(document.getElementById('root'))
-    root.render(
-      <Provider store={store}>
-        <App />
-      </Provider>
-    )
-  })
-}
+export default App

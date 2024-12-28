@@ -2,8 +2,7 @@ import { DBConfig } from '../db/config'
 import createAudioStore from '../db/stores/audio-store'
 import createVideoStore from '../db/stores/video-store'
 
-// @ts-ignore
-window.eagle.onPluginCreate((plugin: any) => {
+window.eagle.onPluginCreate((plugin) => {
   // オブジェクトストアの作成・削除はDBの更新時しかできないので、バージョンを指定して更新
   const openReq = window.indexedDB.open(plugin.manifest.id, DBConfig.VERSION)
   //　DB名を指定して接続。DBがなければ新規作成される。
@@ -13,7 +12,7 @@ window.eagle.onPluginCreate((plugin: any) => {
     // オブジェクトストアの作成、削除はDBの更新時に実行されるonupgradeneededの中でしかできない。
     // DBの新規作成時以外でDBを更新するには、open()のときにDBの新しいバージョンを指定する。
     // @ts-ignore
-    const db = event.target.result
+    const db: IDBDatabase = event.target.result
 
     if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Audio)) {
       createAudioStore(db)

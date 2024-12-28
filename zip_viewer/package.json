@@ -2,11 +2,14 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prestart": "rm -rf dist/**/*",
-		"start": "parcel viewer/index.html -d dist --public-url ./ --target node"
+		"start": "parcel viewer/index.html -d dist --public-url ./ --target node --no-cache"
 	},
 	"devDependencies": {
+		"@types/file-type": "^10.9.3",
+		"@types/node": "^22.10.2",
 		"@types/react": "^19.0.1",
 		"@types/react-dom": "^19.0.2",
+		"@types/yauzl": "^2.10.3",
 		"cssnano": "^7.0.6",
 		"postcss": "^8.4.49",
 		"typescript": "^5.7.2"

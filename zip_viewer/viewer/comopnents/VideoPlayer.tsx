@@ -1,29 +1,29 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
 import { DBConfig } from '../db/config'
-import { putVideoObject } from '../db/stores/video-store'
+import { putVideoObject, VideoObject } from '../db/stores/video-store'
 import AppParameters from '../lib/app-parameters'
 import spinIcon from '../resources/spin.svg'
 
 const VideoPlayer = ({ entry, onContextMenu }) => {
   const videoRef = useRef(null)
-  const [src, setSrc] = useState()
+  const [src, setSrc] = useState('')
 
   useLayoutEffect(() => {
     if (!videoRef.current) {
       return
     }
-    let db
+    let db: IDBDatabase
     const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
     openReq.onsuccess = (event)=> {
-      db = event.target.result
+      db = (event.target as IDBOpenDBRequest).result
       const transaction = db.transaction(DBConfig.STORE_NAMES.Video, 'readonly')
       const store = transaction.objectStore(DBConfig.STORE_NAMES.Video)
       const getReq = store.get([AppParameters.identify, entry.encodedFileName])
 
       getReq.onsuccess = (event) => {
         if (getReq.result) {
-          videoRef.current.currentTime = event.target.result.lastTime
+          videoRef.current.currentTime = (event.target as IDBRequest<VideoObject>).result.lastTime
         }
       }
       getReq.onerror = (event) => {
@@ -68,7 +68,7 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
     URL.revokeObjectURL(src)
 
     entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
-      const chunks = []
+      const chunks: Uint8Array<ArrayBuffer>[] = []
 
       readStream.on('data', chunk => {
         chunks.push(chunk)

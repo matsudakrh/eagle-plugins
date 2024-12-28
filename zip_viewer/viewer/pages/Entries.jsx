@@ -1,21 +1,21 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
 import _ from 'lodash'
-import { setCurrentDirectory, setCurrentHoverEntry } from '../store/directory-store'
-import folderIcon from '../resources/kkrn_icon_folder_2.png'
-import styles from '../styles'
 import yauzl from 'yauzl'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
+import { setCurrentDirectory, setCurrentHoverEntry } from '../store/directory-store'
 import ListThumbnail from '../comopnents/ListThumbnail'
 import EntriesFooter from '../comopnents/EntriesFooter'
+import styles from '../styles'
+import folderIcon from '../resources/kkrn_icon_folder_2.png'
 
 const { Entry } = yauzl
 const { gridStyle } = styles
 
 const Entries = memo(({ entries }) => {
-  const structure = useSelector((state) => state.directory.structure)
-  const currentDirectory = useSelector((state) => state.directory.currentDirectory)
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
+  const structure = useAppSelector((state) => state.directory.structure)
+  const currentDirectory = useAppSelector((state) => state.directory.currentDirectory)
   const [visibleEntries, setVisibleEntries] = useState([])
 
   const parentDirectory = useMemo(() => {
@@ -108,7 +108,6 @@ const Entries = memo(({ entries }) => {
             return <ListThumbnail
               key={entry[MetaKeys.UUID]}
               entry={entry}
-              index={entries.findIndex(e => entry === e)}
               onOpenDirectory={handleOpenDirectory}
             />
           }

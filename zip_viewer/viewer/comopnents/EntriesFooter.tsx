@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { useSelector } from 'react-redux'
+import { useAppSelector } from '../hooks/redux'
 
 const EntriesFooter = () => {
-  const currentHoverEntryName = useSelector(state => state.directory.currentHoverEntryName)
+  const currentHoverEntryName = useAppSelector(state => state.directory.currentHoverEntryName)
 
   return <div
     style={{

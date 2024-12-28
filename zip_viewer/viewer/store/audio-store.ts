@@ -1,6 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-const initialState = {
+interface AudioState {
+  volume: number
+}
+
+const initialState: AudioState = {
   volume: 1,
 }
 
@@ -8,7 +12,7 @@ const audioSlice = createSlice({
   name: 'audio',
   initialState,
   reducers: {
-    changeVolume: (state, action)  => {
+    changeVolume: (state, action: PayloadAction<number>)  => {
       state.volume = action.payload
     },
   },
