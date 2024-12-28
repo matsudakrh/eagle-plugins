@@ -1,4 +1,4 @@
-export namespace EageResources {
+export namespace EagleResources {
   type Item = {
     readonly id: string
     name: string

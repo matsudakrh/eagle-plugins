@@ -1,4 +1,4 @@
-import { EageTools } from './tools'
+import { EagleTools } from './tools'
 
 type Theme =
   'Auto'
@@ -14,11 +14,11 @@ declare global {
 
   interface Window {
     eagle: {
-      plugin: EageTools.Plugin,
-      item: EageTools.Item
-      folder: EageTools.Folder
+      plugin: EagleTools.Plugin,
+      item: EagleTools.Item
+      folder: EagleTools.Folder
 
-      onPluginCreate: (callback: (plugin: EageTools.Plugin) => void) => void
+      onPluginCreate: (callback: (plugin: EagleTools.Plugin) => void) => void
       onPluginShow: (callback: () => void) => void
       onPluginRun: (callback: () => void) => void
       onPluginHide: (callback: () => void) => void

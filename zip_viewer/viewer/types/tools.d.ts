@@ -1,4 +1,4 @@
-import { EageResources } from './recources'
+import { EagleResources } from './recources'
 
 type EagleManifest = {
   id: string
@@ -12,7 +12,7 @@ type EagleManifest = {
   platform: string
 }
 
-export namespace EageTools {
+export namespace EagleTools {
   type Plugin = {
     manifest: EagleManifest
     icon: string
@@ -21,18 +21,18 @@ export namespace EageTools {
   }
 
   type Item = {
-    get: (options: TODO) => Promise<EageResources.Item[]>
-    getAll: () => Promise<EageResources.Item[]>
-    getById: (itemId: string) => Promise<EageResources.Item>
-    getByIds: (itemIds: string[]) => Promise<EageResources.Item[]>
-    getSelected: () => Promise<EageResources.Item[]>
+    get: (options: TODO) => Promise<EagleResources.Item[]>
+    getAll: () => Promise<EagleResources.Item[]>
+    getById: (itemId: string) => Promise<EagleResources.Item>
+    getByIds: (itemIds: string[]) => Promise<EagleResources.Item[]>
+    getSelected: () => Promise<EagleResources.Item[]>
   }
 
   type Folder = {
-    create: (options: TODO) => Promise<EageResources.Folder>
-    createSubfolder: (parentId: string, options: TODO) => Promise<EageResources.Folder>
-    get: (options: TODO) => Promise<EageResources.Folder[]>
-    getAll: () => Promise<EageResources.Folder[]>
-    getById: (folderId: string) => Promise<EageResources.Folder>
+    create: (options: TODO) => Promise<EagleResources.Folder>
+    createSubfolder: (parentId: string, options: TODO) => Promise<EagleResources.Folder>
+    get: (options: TODO) => Promise<EagleResources.Folder[]>
+    getAll: () => Promise<EagleResources.Folder[]>
+    getById: (folderId: string) => Promise<EagleResources.Folder>
   }
 }
