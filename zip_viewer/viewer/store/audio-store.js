@@ -1,27 +1,19 @@
-
-const ActionTypes = {
-  CHANGE_VOLUME: 'CHANGE_VOLUME'
-}
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   volume: 1,
 }
 
-export const changeVolume = volume => ({
-  type: ActionTypes.CHANGE_VOLUME,
-  payload: { volume }
+const audioSlice = createSlice({
+  name: 'audio',
+  initialState,
+  reducers: {
+    changeVolume: (state, action)  => {
+      state.volume = action.payload
+    },
+  },
 })
 
-const audioStore = (state = initialState, action) => {
-  switch (action.type) {
-    case ActionTypes.CHANGE_VOLUME:
-      return {
-        ...state,
-        volume: action.payload.volume,
-      }
-    default:
-      return state
-  }
-}
+export const { changeVolume } = audioSlice.actions
 
-export default audioStore
+export default audioSlice.reducer

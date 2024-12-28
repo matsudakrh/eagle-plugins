@@ -14,9 +14,10 @@ import yauzl from 'yauzl'
 import AppParameters from './lib/app-parameters'
 import charEncode from './lib/char-encode'
 import store from './store'
-import { setStructure } from './store/directory-store.js'
+import { setStructure } from './store/directory-store'
 import Preview from './pages/Preview'
 import Entries from './pages/Entries'
+import { getFolderStructure } from './lib/zip-tree'
 
 const App = memo(() => {
   const [entries, setEntries] = useState([])
@@ -58,7 +59,7 @@ const App = memo(() => {
           })
         })
 
-        dispatch(setStructure(entries))
+        dispatch(setStructure(getFolderStructure(entries)))
         setEntries(entries)
       })
     })

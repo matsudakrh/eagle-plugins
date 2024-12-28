@@ -15,7 +15,7 @@ const ignoreNames = [
 ]
 
 // フォルダ構成をツリー形式で表示する関数
-function setFolderStructure(entries) {
+function getFolderStructure(entries) {
   const structure = {}
 
   entries.forEach(entry => {
@@ -71,6 +71,6 @@ const findObjectByCondition = (obj, condition) => {
 }
 
 export {
-  setFolderStructure,
+  getFolderStructure,
   findObjectByCondition
 }
