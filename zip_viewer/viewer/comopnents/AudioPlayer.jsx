@@ -1,16 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { DBConfig } from '../db/config'
+import { putAudioObject } from '../db/stores/audio-store'
 import VolumeBar from './AudioPlayer/VolumeBar'
 import SeekBar from './AudioPlayer/SeekBar'
 import CurrentTime from './AudioPlayer/CurrentTime'
-import { DBConfig } from '../db/config'
-import { putAudioObject } from '../db/stores/audio-store'
+import AppParameters from '../lib/app-parameters'
 import iconSpin from '../resources/spin.svg'
 
 const AudioPlayer = ({ entry, onContextMenu }) => {
   const audioRef = useRef(null)
   const volume = useSelector(state => state.audio.volume)
-  const identify = useSelector(state => state.root.identify)
   const [src, setSrc] = useState()
   const [thumb, setThumb] = useState()
   const [audioBuffer, setAudioBuffer] = useState()
@@ -21,13 +21,13 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
 
   useLayoutEffect(() => {
     let db
-    const openReq = indexedDB.open(window.eagle.plugin.manifest.id, DBConfig.VERSION)
+    const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
     openReq.onsuccess = (event)=> {
       db = event.target.result
       const transaction = db.transaction(DBConfig.STORE_NAMES.Audio, 'readonly')
       const store = transaction.objectStore(DBConfig.STORE_NAMES.Audio)
-      const getReq = store.get([identify, entry.encodedFileName])
+      const getReq = store.get([AppParameters.identify, entry.encodedFileName])
 
       getReq.onsuccess = (event) => {
         if (getReq.result) {
@@ -47,7 +47,7 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
 
       const putReq = putAudioObject(db, {
         filePath: entry.encodedFileName,
-        itemId: identify,
+        itemId: AppParameters.identify,
         lastTime: currentTime - 0.3,
       })
 

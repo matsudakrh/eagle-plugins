@@ -1,12 +1,11 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
 import { DBConfig } from '../db/config'
 import { putVideoObject } from '../db/stores/video-store'
+import AppParameters from '../lib/app-parameters'
 import spinIcon from '../resources/spin.svg'
 
 const VideoPlayer = ({ entry, onContextMenu }) => {
   const videoRef = useRef(null)
-  const identify = useSelector(state => state.root.identify)
   const [src, setSrc] = useState()
 
   useLayoutEffect(() => {
@@ -14,13 +13,13 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
       return
     }
     let db
-    const openReq = indexedDB.open(window.eagle.plugin.manifest.id, DBConfig.VERSION)
+    const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
     openReq.onsuccess = (event)=> {
       db = event.target.result
       const transaction = db.transaction(DBConfig.STORE_NAMES.Video, 'readonly')
       const store = transaction.objectStore(DBConfig.STORE_NAMES.Video)
-      const getReq = store.get([identify, entry.encodedFileName])
+      const getReq = store.get([AppParameters.identify, entry.encodedFileName])
 
       getReq.onsuccess = (event) => {
         if (getReq.result) {
@@ -39,7 +38,7 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
       const currentTime = videoRef.current.currentTime
       const putReq = putVideoObject(db, {
         filePath: entry.encodedFileName,
-        itemId: identify,
+        itemId: AppParameters.identify,
         lastTime: currentTime - 0.3,
       })
 

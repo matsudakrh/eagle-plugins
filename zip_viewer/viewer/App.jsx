@@ -11,10 +11,10 @@ import {
   HashRouter,
 } from 'react-router-dom'
 import yauzl from 'yauzl'
+import AppParameters from './lib/app-parameters'
 import charEncode from './lib/char-encode'
 import store from './store'
 import { setStructure } from './store/directory-store.js'
-import { setIdentify } from './store/root'
 import Preview from './pages/Preview'
 import Entries from './pages/Entries'
 
@@ -22,14 +22,9 @@ const App = memo(() => {
   const [entries, setEntries] = useState([])
   const dispatch = useDispatch()
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search)
-    const filePath = urlParams.get('path')
-    const identify = urlParams.get('id')
-
     let _file
-    dispatch(setIdentify(identify))
 
-    yauzl.open(filePath, { autoClose: false, lazyEntries: true }, (err, zipFile) => {
+    yauzl.open(AppParameters.filePath, { autoClose: false, lazyEntries: true }, (err, zipFile) => {
       if (err) {
         console.error(err)
         return
