@@ -13,10 +13,10 @@ const CurrentTime: React.FC<{ audio: HTMLAudioElement | null }> = ({ audio }) =>
   }, [audio])
 
   return <div>
-    {Number.isInteger(curentTime)
+    {curentTime
       ? `${`${Math.trunc(curentTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(curentTime % 60)}`.padStart(2, '0')}`
       : '--:--'} / {
-    Number.isInteger(audio?.duration)
+    audio?.duration
       ? `${`${Math.trunc(audio?.duration / 60)}`.padStart(2, '0')}:${`${Math.ceil(audio?.duration % 60)}`.padStart(2, '0')}`
       : '--:--'
   }
