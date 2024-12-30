@@ -2,6 +2,7 @@ import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as FileType from 'file-type'
 import fs from 'fs'
+import { Entry } from 'yauzl'
 import { useAppDispatch } from '../hooks/redux'
 import { setCurrentHoverEntry } from '../store/directory-store'
 import charEncode from '../lib/char-encode'
@@ -13,7 +14,10 @@ import spinIcon from '../resources/spin.svg'
 
 const { gridStyle } = styles
 
-const ListThumbnail = memo(({
+const ListThumbnail: React.FC<{
+  entry: Entry
+  onOpenDirectory: (name: string) => void
+}> = memo(({
   entry,
   onOpenDirectory,
 }) => {
@@ -21,7 +25,7 @@ const ListThumbnail = memo(({
   const dispatch = useAppDispatch()
   // IntersectionObserverでlazyロードするため初期画像が最低限の高さを与える役割を兼ねる
   const [src, setSrc] = useState(spinIcon)
-  const [fileType, setFileType] = useState()
+  const [fileType, setFileType] = useState<FileType.FileTypeResult>()
   const navigate = useNavigate()
   const words = useMemo(() => {
     return entry.encodedFileName.split('/').filter((word) => word !== '')
@@ -35,7 +39,7 @@ const ListThumbnail = memo(({
       id: 'export',
       label: 'ファイルをエクスポート',
       click: async () => {
-        entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+        entry.zipFile.openReadStream(entry, null, (err, readStream) => {
           if (err) {
             return
           }
@@ -68,7 +72,7 @@ const ListThumbnail = memo(({
             return
           }
           let item = (await window.eagle.item.getSelected())[0]
-          const tmpPath = eagle.os.tmpdir()
+          const tmpPath = window.eagle.os.tmpdir()
           const filePath = `${tmpPath}/${words[words.length - 1]}`
           fs
             .promises
@@ -104,7 +108,7 @@ const ListThumbnail = memo(({
           return
         }
 
-        entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+        entry.zipFile.openReadStream(entry, null, (err, readStream) => {
           if (err) {
             console.error(err)
             return

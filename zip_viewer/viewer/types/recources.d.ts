@@ -66,6 +66,15 @@ export namespace EagleResources {
     remove: () => Promise<boolean>
   }
 
+  // https://www.electronjs.org/docs/latest/api/menu-item
+  type ContextMenuItem = {
+    id: string
+    label: string
+    click?: () => void
+    sublabel?: string
+    submenu?: ContextMenuItem[]
+  }
+
   type LibraryInfoFolder = {
     id: string
     name: string

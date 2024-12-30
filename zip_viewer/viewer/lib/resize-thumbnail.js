@@ -11,6 +11,7 @@ const resizeThumbnail = (binary, callback, options = { width: 400 }) => {
       callback(buffer)
     }).catch((error) => {
       console.log(error)
+      throw 'リサイズ処理に失敗しました。'
   })
 }
 

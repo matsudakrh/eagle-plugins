@@ -1,18 +1,18 @@
 import React, { useEffect, useLayoutEffect, useRef, useState, memo, useMemo } from 'react'
 import { useKey } from 'react-use'
 import * as pdfjsDist from 'pdfjs-dist'
-import resizeThumbnail from '../lib/resize-thumbnail'
 import fs from 'fs'
+import resizeThumbnail from '../lib/resize-thumbnail'
 
 // ページを都度描画するとテンポが悪いので前後何枚かを描画しておきたい
 // あるいは全ページを一気にレンダリングしてサムネ一覧などと兼ねる
 
 pdfjsDist.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdf.worker@1.0.0/pdf.worker.min.js'
 
-const PdfViewer = memo(({ buffer }) => {
+const PdfViewer: React.FC<{ buffer: Buffer }> = memo(({ buffer }) => {
   const canvas = useRef(null)
   const [generated, setGenerated] = useState(false)
-  const [pdf, setPdf] = useState()
+  const [pdf, setPdf] = useState<pdfjsDist.PDFDocumentProxy>()
   const filePath = useMemo(() => {
     const tmpPath = window.eagle.os.tmpdir()
     return `${tmpPath}/${window.crypto.randomUUID()}.pdf`

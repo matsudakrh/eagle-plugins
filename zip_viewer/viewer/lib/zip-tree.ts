@@ -1,6 +1,6 @@
 import charEncode from './char-encode'
 import yauzl from 'yauzl'
-const  { Entry } = yauzl
+const { Entry } = yauzl
 
 export const MetaKeys = {
   NAME: '$_name',
@@ -15,7 +15,7 @@ const ignoreNames = [
 ]
 
 // フォルダ構成をツリー形式で表示する関数
-function getFolderStructure(entries) {
+const getFolderStructure = (entries: yauzl.Entry[]) => {
   const structure = {}
 
   entries.forEach(entry => {
@@ -45,8 +45,8 @@ function getFolderStructure(entries) {
   return structure
 }
 
-const findObjectByCondition = (obj, condition) => {
-  const recursive = (obj, condition) => {
+const findObjectByCondition = (obj: object, condition: (obj: object) => boolean) => {
+  const recursive = (obj: object, condition: (obj: object) => boolean) => {
     // 条件を満たす場合はそのオブジェクトを返す
     if (condition(obj)) {
       return obj

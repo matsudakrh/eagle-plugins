@@ -108,8 +108,16 @@ export namespace EagleTools {
     ) => Promise<string>
   }
 
+  type ContextMenu = {
+    open: (menuItems: EagleResources.ContextMenuItem[]) => void
+  }
+
+  type Shell = {
+    openPath: (path: string) =>  Promise<void>
+  }
+
   type OS = {
-    tmpDir: () => string
+    tmpdir: () => string
     version: () => string
     type: () => 'Darwin' | 'Windows_NT'
     release: () => string

@@ -11,9 +11,9 @@ import iconSpin from '../resources/spin.svg'
 const AudioPlayer = ({ entry, onContextMenu }) => {
   const audioRef = useRef(null)
   const volume = useAppSelector(state => state.audio.volume)
-  const [src, setSrc] = useState()
-  const [thumb, setThumb] = useState()
-  const [audioBuffer, setAudioBuffer] = useState()
+  const [src, setSrc] = useState<string>()
+  const [thumb, setThumb] = useState<string>()
+  const [audioBuffer, setAudioBuffer] = useState<AudioBuffer>()
   const [isPlaying, setIsPlaying] = useState(false)
   const audioContext = useMemo(() => {
     return new window.AudioContext()
@@ -24,6 +24,7 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
     const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
     openReq.onsuccess = (event)=> {
+      // @ts-ignore
       db = event.target.result
       const transaction = db.transaction(DBConfig.STORE_NAMES.Audio, 'readonly')
       const store = transaction.objectStore(DBConfig.STORE_NAMES.Audio)

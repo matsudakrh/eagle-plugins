@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
+import * as FileType from 'file-type'
 import { DBConfig } from '../db/config'
 import { putVideoObject, VideoObject } from '../db/stores/video-store'
 import AppParameters from '../lib/app-parameters'
@@ -6,7 +7,7 @@ import spinIcon from '../resources/spin.svg'
 
 const VideoPlayer = ({ entry, onContextMenu }) => {
   const videoRef = useRef(null)
-  const [src, setSrc] = useState('')
+  const [src, setSrc] = useState<string>()
 
   useLayoutEffect(() => {
     if (!videoRef.current) {
@@ -76,7 +77,8 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
 
       readStream.on('end', async () => {
         const buffer = Buffer.concat(chunks)
-        const blob = new Blob([buffer], { type: 'video/mp4' })
+        const fileType = await FileType.fromBuffer(buffer)
+        const blob = new Blob([buffer], { type: fileType?.mime || 'video/mp4' })
         setSrc(URL.createObjectURL(blob))
       })
     })
@@ -85,7 +87,6 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
       URL.revokeObjectURL(src)
     }
   }, [entry])
-
 
   return <>
     <video
@@ -104,6 +105,7 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
       }}
       autoPlay
       controls
+      controlsList="nofullscreen"
       onContextMenu={onContextMenu}
     ></video>
     <img

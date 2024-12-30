@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useKey } from 'react-use'
 import * as FileType from 'file-type'
 import fs from 'fs'
+import yauzl from 'yauzl'
+import { EagleResources } from '../types/recources'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import charEncode from '../lib/char-encode'
@@ -14,16 +16,18 @@ import VideoPlayer from '../comopnents/VideoPlayer'
 import PreviewHeader from '../comopnents/PreviewHeader'
 import spinIcon from '../resources/spin.svg'
 
-const Preview = memo(({ entries }) => {
+const Preview: React.FC<{
+  entries: yauzl.Entry[]
+}>  = memo(({ entries }) => {
   const dispatch = useAppDispatch()
   const structure = useAppSelector(state => state.directory.structure)
   const currentDirectory = useAppSelector(state => state.directory.currentDirectory)
   const location = useLocation()
-  const [buffer, setBuffer] = useState()
+  const [buffer, setBuffer] = useState<Buffer>()
   const [imgSrc, setImgSrc] = useState(spinIcon)
   const [text, setText] = useState('')
   const navigate = useNavigate()
-  const [fileType, setFileType] = useState()
+  const [fileType, setFileType] = useState<FileType.FileTypeResult | null>()
   const entry = useMemo(() => {
     if (location.state?.fullpath) {
       return entries.find(entry => entry.encodedFileName === location.state.fullpath)
@@ -60,9 +64,9 @@ const Preview = memo(({ entries }) => {
     return currentDirEntries[index + 1]
   }, [currentDirEntries, entry])
 
-  const words = useMemo(() => {
+  const words: string[] = useMemo(() => {
     if (!entry) {
-      return <div></div>
+      return []
     }
     return entry.encodedFileName.split('/').filter((word) => word !== '')
   }, [entry])
@@ -101,12 +105,12 @@ const Preview = memo(({ entries }) => {
   useKey('Backspace',  handleBack, {}, [])
 
   const handleContextMenu = () => {
-    const items = [
+    const items: EagleResources.ContextMenuItem[] = [
       {
         id: 'export',
         label: 'ファイルをエクスポート',
         click: async () => {
-          entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+          entry.zipFile.openReadStream(entry, null, (err, readStream) => {
             if (err) {
               return
             }
@@ -140,7 +144,7 @@ const Preview = memo(({ entries }) => {
 
         resizeThumbnail(buffer, async (buffer) => {
           let item = (await window.eagle.item.getSelected())[0]
-          const tmpPath = eagle.os.tmpdir()
+          const tmpPath = window.eagle.os.tmpdir()
           const filePath = `${tmpPath}/${words[words.length - 1]}`
           fs
             .promises
@@ -158,7 +162,7 @@ const Preview = memo(({ entries }) => {
           })
         }, { width: size })
       }
-      items.push(      {
+      items.push({
         id: 'thumbnail',
         label: 'サムネイルに設定',
         submenu: [
@@ -194,7 +198,7 @@ const Preview = memo(({ entries }) => {
     if (!entry) {
       return
     }
-    entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+    entry.zipFile.openReadStream(entry, null, (err, readStream) => {
       if (err) {
         console.error(err)
         return
@@ -210,7 +214,7 @@ const Preview = memo(({ entries }) => {
               setFileType(fileType)
               /// Error: stream destroyed
               readStream.destroy()
-              resolve()
+              resolve(true)
             })
           } catch (e) {
             reject(e)
@@ -226,7 +230,7 @@ const Preview = memo(({ entries }) => {
     }
     if (
       fileType?.mime.startsWith('image/') || fileType?.mime === 'application/pdf' || entry.encodedFileName.endsWith('txt')) {
-      entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+      entry.zipFile.openReadStream(entry, null, (err, readStream) => {
         if (err) {
           console.error(err)
           return
@@ -316,7 +320,6 @@ const Preview = memo(({ entries }) => {
   }}>
     <PreviewHeader
       name={words[words.length - 1]}
-      count={entries.length}
       onBack={handleBack}
       onPrev={preEntry ? handlePrev : null}
       onNext={nextEntry ? handleNext : null}

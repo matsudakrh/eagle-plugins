@@ -22,6 +22,8 @@ declare global {
       library: EagleTools.Library
       app: EagleTools.App
       os: EagleTools.OS
+      contextMenu: EagleTools.ContextMenu
+      shell: EagleTools.Shell
 
       onPluginCreate: (callback: (plugin: EagleTools.Plugin) => void) => void
       onPluginShow: (callback: () => void) => void

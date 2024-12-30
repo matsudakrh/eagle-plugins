@@ -2,14 +2,12 @@
 const waitTime = (time = 4) => {
   return new Promise((resolve, reject) => {
     return setTimeout(() => {
-      resolve()
+      resolve(null)
     }, time)
   })
 }
 
-const drawWave = async (audioBuffer, waveformCanvas) => {
-  if (!audioBuffer) return
-
+const drawWave = async (audioBuffer: AudioBuffer, waveformCanvas: HTMLCanvasElement) => {
   const SelectStyle = getComputedStyle(document.body)
   const color = String(SelectStyle.getPropertyValue('--color')).trim()
   const canvasContext = waveformCanvas.getContext('2d')

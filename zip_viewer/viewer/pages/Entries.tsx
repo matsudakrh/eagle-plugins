@@ -12,7 +12,9 @@ import folderIcon from '../resources/kkrn_icon_folder_2.png'
 const { Entry } = yauzl
 const { gridStyle } = styles
 
-const Entries = memo(({ entries }) => {
+const Entries: React.FC<{
+  entries: yauzl.Entry[]
+}> = memo(({ entries }) => {
   const dispatch = useAppDispatch()
   const structure = useAppSelector((state) => state.directory.structure)
   const currentDirectory = useAppSelector((state) => state.directory.currentDirectory)
