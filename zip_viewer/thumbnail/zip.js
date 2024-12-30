@@ -1,7 +1,7 @@
 const fs = require('fs')
 const yauzl = require('yauzl')
-const imageSize = require('../lib/image-size')
-const resizeThumbnail = require('../viewer/lib/resize-thumbnail.js')
+const imageSize = require('./image-size')
+const resizeThumbnail = require('./resize-thumbnail.js')
 
 module.exports = async ({ src, dest, item }) => {
   return new Promise(async (resolve, reject) => {
