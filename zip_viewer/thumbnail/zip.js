@@ -62,7 +62,7 @@ module.exports = async ({ src, dest, item }) => {
 
         zipFile.on('end', function() {
           zipFile.close()
-          reject(err)
+          throw '画像が見つかりませんでした。'
         })
       })
     }

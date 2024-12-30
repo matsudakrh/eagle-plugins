@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState, memo } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState, memo, useMemo } from 'react'
 import { useKey } from 'react-use'
 import * as pdfjsDist from 'pdfjs-dist'
 import resizeThumbnail from '../lib/resize-thumbnail'
@@ -13,8 +13,10 @@ const PdfViewer = memo(({ buffer }) => {
   const canvas = useRef(null)
   const [generated, setGenerated] = useState(false)
   const [pdf, setPdf] = useState()
-  const tmpPath = window.eagle.os.tmpdir()
-  const filePath = `${tmpPath}/${window.crypto.randomUUID()}.pdf`
+  const filePath = useMemo(() => {
+    const tmpPath = window.eagle.os.tmpdir()
+    return `${tmpPath}/${window.crypto.randomUUID()}.pdf`
+  }, [])
   const [currentPage, setCurrentPage] = useState(1)
 
   const handlePreview = () => {
@@ -52,7 +54,6 @@ const PdfViewer = memo(({ buffer }) => {
           let item = (await window.eagle.item.getSelected())[0]
           const image = canvas.current.toDataURL('image/png')
 
-
           resizeThumbnail(Buffer.from(image.replace('data:image\/png;base64,', ''), 'base64'), (buffer) => {
             const tmpPath = window.eagle.os.tmpdir()
             const filePath = `${tmpPath}/${window.crypto.randomUUID()}.png`
@@ -87,7 +88,7 @@ const PdfViewer = memo(({ buffer }) => {
       cMapUrl: 'https://unpkg.com/pdfjs-dist@3.1.81/cmaps/',
       cMapPacked: true,
     })
-    loader.promise.then( (result) => {
+    loader.promise.then((result) => {
       setPdf(result)
     })
   }, [canvas])
@@ -145,8 +146,7 @@ const PdfViewer = memo(({ buffer }) => {
       maxWidth: '100%',
       maxHeight: '100%',
     }}
-    >
-  </canvas>
+  ></canvas>
 })
 
 export default PdfViewer
