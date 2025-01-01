@@ -7,6 +7,7 @@ import { useAppDispatch } from '../hooks/redux'
 import { setCurrentHoverEntry } from '../store/directory-store'
 import charEncode from '../lib/char-encode'
 import resizeThumbnail from '../lib/resize-thumbnail'
+import AppParameters from '../lib/app-parameters'
 import folderIcon from '../resources/kkrn_icon_folder_2.png'
 import audioIcon from '../resources/icon_audio.png'
 import styles from '../styles'
@@ -71,7 +72,7 @@ const ListThumbnail: React.FC<{
             alert('画像ではないファイルは設定出来ません')
             return
           }
-          let item = (await window.eagle.item.getSelected())[0]
+          let item = await window.eagle.item.getById(AppParameters.identify)
           const tmpPath = window.eagle.os.tmpdir()
           const filePath = `${tmpPath}/${words[words.length - 1]}`
           fs

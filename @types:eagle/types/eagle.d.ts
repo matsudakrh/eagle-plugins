@@ -1,4 +1,5 @@
 import { EagleTools } from './tools'
+import { EagleResources } from './recources'
 
 declare global {
   type TODO = any
@@ -35,4 +36,7 @@ declare global {
   }
 }
 
-export {}
+export {
+  EagleTools,
+  EagleResources,
+}

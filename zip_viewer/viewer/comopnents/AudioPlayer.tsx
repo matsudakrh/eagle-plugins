@@ -113,7 +113,7 @@ const AudioPlayer: React.FC<{
 
   useEffect(() => {
     const getThumbnail = async () => {
-      let item = (await window.eagle.item.getSelected())[0]
+      let item = await window.eagle.item.getById(AppParameters.identify)
       setThumb(item.thumbnailPath)
     }
 

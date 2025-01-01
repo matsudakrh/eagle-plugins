@@ -3,6 +3,7 @@ import { useKey } from 'react-use'
 import * as pdfjsDist from 'pdfjs-dist'
 import fs from 'fs'
 import resizeThumbnail from '../lib/resize-thumbnail'
+import AppParameters from '../lib/app-parameters'
 
 // ページを都度描画するとテンポが悪いので前後何枚かを描画しておきたい
 // あるいは全ページを一気にレンダリングしてサムネ一覧などと兼ねる
@@ -51,7 +52,7 @@ const PdfViewer: React.FC<{ buffer: Buffer }> = memo(({ buffer }) => {
         id: 'thumbnail',
         label: 'サムネイルに設定',
         click: async () => {
-          let item = (await window.eagle.item.getSelected())[0]
+          let item = await window.eagle.item.getById(AppParameters.identify)
           const image = canvas.current.toDataURL('image/png')
 
           resizeThumbnail(Buffer.from(image.replace('data:image\/png;base64,', ''), 'base64'), (buffer) => {

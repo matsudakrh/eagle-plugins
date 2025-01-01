@@ -2,7 +2,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prestart": "rm -rf dist/**/*",
-		"start": "parcel viewer/index.html -d dist --public-url ./ --target node --no-cache"
+		"preinstall": "pnpm add ../eagle_types",
+		"start": "parcel viewer/index.html -d dist --public-url ./ --target node"
 	},
 	"devDependencies": {
 		"@types/file-type": "^10.9.3",
@@ -16,6 +17,7 @@
 	},
 	"dependencies": {
 		"@reduxjs/toolkit": "^2.5.0",
+		"@types/eagle": "link:../@types:eagle",
 		"chardet": "^2.0.0",
 		"file-type": "16.5.4",
 		"iconv-lite": "^0.6.3",

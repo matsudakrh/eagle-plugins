@@ -4,8 +4,9 @@ import { useKey } from 'react-use'
 import * as FileType from 'file-type'
 import fs from 'fs'
 import yauzl from 'yauzl'
-import { EagleResources } from '../types/recources'
+import { EagleResources } from 'eagle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import AppParameters from '../lib/app-parameters'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import charEncode from '../lib/char-encode'
 import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
@@ -143,7 +144,7 @@ const Preview: React.FC<{
         }
 
         resizeThumbnail(buffer, async (buffer) => {
-          let item = (await window.eagle.item.getSelected())[0]
+          let item = await window.eagle.item.getById(AppParameters.identify)
           const tmpPath = window.eagle.os.tmpdir()
           const filePath = `${tmpPath}/${words[words.length - 1]}`
           fs
