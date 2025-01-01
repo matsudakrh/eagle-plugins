@@ -41,10 +41,17 @@ const VideoPlayer: React.FC<{
 
     const putData = () => {
       const currentTime = videoRef.current.currentTime
+      let lastTime: number
+      if (currentTime >= videoRef.current.duration - 30) {
+        lastTime = 0
+      } else {
+        lastTime =  currentTime - 0.3 > 0 ?  currentTime - 0.3 : 0
+      }
+
       const putReq = putVideoObject(db, {
         filePath: entry.encodedFileName,
         itemId: AppParameters.identify,
-        lastTime: currentTime - 0.3,
+        lastTime,
       })
 
       putReq.onsuccess = () => {

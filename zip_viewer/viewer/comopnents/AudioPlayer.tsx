@@ -48,11 +48,17 @@ const AudioPlayer: React.FC<{
 
     const putData = () => {
       const currentTime = audioRef.current.currentTime
+      let lastTime: number
+      if (currentTime >= audioRef.current.duration - 30) {
+        lastTime = 0
+      } else {
+        lastTime =  currentTime - 0.3 > 0 ?  currentTime - 0.3 : 0
+      }
 
       const putReq = putAudioObject(db, {
         filePath: entry.encodedFileName,
         itemId: AppParameters.identify,
-        lastTime: currentTime - 0.3,
+        lastTime,
       })
 
       putReq.onsuccess = () => {
