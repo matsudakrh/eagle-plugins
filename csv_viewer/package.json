@@ -5,14 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "pnpm add -D ../@types:eagle",
+    "preinstall": "pnpm add -D ../@types/eagle",
     "start": "parcel viewer/index.html -d dist --public-url ./ --target node"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/eagle": "link:../@types:eagle",
+    "@types/eagle": "link:../@types/eagle",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.2",
     "cssnano": "^7.0.6",

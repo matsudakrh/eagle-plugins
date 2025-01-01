@@ -19,8 +19,8 @@ importers:
         version: 0.10.11
     devDependencies:
       '@types/eagle':
-        specifier: link:../@types:eagle
-        version: link:../@types:eagle
+        specifier: link:../@types/eagle
+        version: link:../@types/eagle
       '@types/react':
         specifier: ^19.0.1
         version: 19.0.1
