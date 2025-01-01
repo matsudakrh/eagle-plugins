@@ -11,8 +11,7 @@ window.eagle.onPluginCreate((plugin) => {
     //onupgradeneededは、DBのバージョン更新(DBの新規作成も含む)時のみ実行
     // オブジェクトストアの作成、削除はDBの更新時に実行されるonupgradeneededの中でしかできない。
     // DBの新規作成時以外でDBを更新するには、open()のときにDBの新しいバージョンを指定する。
-    // @ts-ignore
-    const db: IDBDatabase = event.target.result
+    const db: IDBDatabase = (event.target as IDBOpenDBRequest).result
 
     if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Audio)) {
       createAudioStore(db)
@@ -23,8 +22,7 @@ window.eagle.onPluginCreate((plugin) => {
   }
   openReq.onsuccess = (event)=> {
     //onupgradeneededの後に実行。更新がない場合はこれだけ実行
-    // @ts-ignore
-    const db = event.target.result
+    const db = (event.target as IDBOpenDBRequest).result
     // 接続を解除する
     db.close()
   }
