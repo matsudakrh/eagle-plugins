@@ -9,9 +9,9 @@ export const MetaKeys = {
 }
 
 const ignoreNames = [
-  '__MACOSX',
-  'Thumbs.db',
-  'Desktop.ini',
+  '__macosx',
+  'thumbs.db',
+  'desktop.ini',
 ]
 
 // フォルダ構成をツリー形式で表示する関数
@@ -24,7 +24,7 @@ const getFolderStructure = (entries: yauzl.Entry[]) => {
     let currentLevel = structure
     pathParts.forEach((part, index) => {
       if (!currentLevel[part]) {
-        if (ignoreNames.includes(part) || part.startsWith('.')) {
+        if (ignoreNames.includes(part.toLowerCase()) || part.startsWith('.')) {
           return
         }
         // 最後の部分がファイルの場合はファイルとして登録

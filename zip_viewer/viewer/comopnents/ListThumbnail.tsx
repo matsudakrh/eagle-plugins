@@ -212,14 +212,24 @@ const ListThumbnail: React.FC<{
       className="list-thumbnail"
       ref={ref}
       onDoubleClick={handleDbClick}
-      onMouseOver={() =>
+      onPointerEnter={() =>
         dispatch(setCurrentHoverEntry(entry.encodedFileName)
       )}
       onPointerLeave={() => dispatch(setCurrentHoverEntry(null))}
     >
+      <style>{`
+        .img-container {
+          padding: 4px;
+          border: 1px solid #fff;
+        }
+        .img-container img {
+            max-width: 100%;
+            max-height: 100%;
+          }
+      `}</style>
       <div>
         {src.startsWith('blob')
-          ? <div style={{ padding: '4px', border: '1px solid #fff' }} ><img src={src} style={{ maxWidth: '100%', maxHeight: '100%' }} alt="" /></div>
+          ? <div className="img-container"><img src={src} alt="" /></div>
           : <img style={gridStyle.img} onContextMenu={handleContextMenu} src={src} alt="" />
         }
       </div>

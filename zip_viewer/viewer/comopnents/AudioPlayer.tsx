@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react'
+import { Entry } from 'yauzl'
 import { DBConfig } from '../db/config'
-import { putAudioObject } from '../db/stores/audio-store'
+import { AudioObject, putAudioObject } from '../db/stores/audio-store'
 import { useAppSelector } from '../hooks/redux'
 import AppParameters from '../lib/app-parameters'
 import VolumeBar from './AudioPlayer/VolumeBar'
@@ -8,7 +9,10 @@ import SeekBar from './AudioPlayer/SeekBar'
 import CurrentTime from './AudioPlayer/CurrentTime'
 import iconSpin from '../resources/spin.svg'
 
-const AudioPlayer = ({ entry, onContextMenu }) => {
+const AudioPlayer: React.FC<{
+  entry: Entry
+  onContextMenu: () => void
+}> = ({ entry, onContextMenu }) => {
   const audioRef = useRef(null)
   const volume = useAppSelector(state => state.audio.volume)
   const [src, setSrc] = useState<string>()
@@ -20,19 +24,18 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
   }, [])
 
   useLayoutEffect(() => {
-    let db
+    let db: IDBDatabase
     const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
     openReq.onsuccess = (event)=> {
-      // @ts-ignore
-      db = event.target.result
+      db = (event.target as IDBOpenDBRequest).result
       const transaction = db.transaction(DBConfig.STORE_NAMES.Audio, 'readonly')
       const store = transaction.objectStore(DBConfig.STORE_NAMES.Audio)
       const getReq = store.get([AppParameters.identify, entry.encodedFileName])
 
       getReq.onsuccess = (event) => {
         if (getReq.result) {
-          audioRef.current.currentTime = event.target.result.lastTime
+          audioRef.current.currentTime = (event.target as IDBRequest<AudioObject>).result.lastTime
         }
       }
       getReq.onerror = (event) => {
@@ -86,7 +89,7 @@ const AudioPlayer = ({ entry, onContextMenu }) => {
     setSrc(null)
     audioRef.current?.pause()
 
-    entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+    entry.zipFile.openReadStream(entry, null, (err, readStream) => {
       const chunks = []
 
       readStream.on('data', chunk => {

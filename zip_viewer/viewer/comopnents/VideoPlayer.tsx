@@ -1,11 +1,15 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
 import * as FileType from 'file-type'
+import { Entry } from 'yauzl'
 import { DBConfig } from '../db/config'
 import { putVideoObject, VideoObject } from '../db/stores/video-store'
 import AppParameters from '../lib/app-parameters'
 import spinIcon from '../resources/spin.svg'
 
-const VideoPlayer = ({ entry, onContextMenu }) => {
+const VideoPlayer: React.FC<{
+  entry: Entry
+  onContextMenu: () => void
+}> = ({ entry, onContextMenu }) => {
   const videoRef = useRef(null)
   const [src, setSrc] = useState<string>()
 
@@ -68,7 +72,7 @@ const VideoPlayer = ({ entry, onContextMenu }) => {
     }
     URL.revokeObjectURL(src)
 
-    entry.zipFile.openReadStream(entry, {}, (err, readStream) => {
+    entry.zipFile.openReadStream(entry, null, (err, readStream) => {
       const chunks: Uint8Array<ArrayBuffer>[] = []
 
       readStream.on('data', chunk => {
