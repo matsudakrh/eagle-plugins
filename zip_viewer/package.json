@@ -2,7 +2,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prestart": "rm -rf dist/**/*",
-		"preinstall": "pnpm add ../eagle_types",
+		"preinstall": "pnpm add -D ../@types:eagle",
 		"start": "parcel viewer/index.html -d dist --public-url ./ --target node"
 	},
 	"devDependencies": {

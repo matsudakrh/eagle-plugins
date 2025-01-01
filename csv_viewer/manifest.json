@@ -12,7 +12,7 @@
     "preview": {
         "csv": {
             "viewer": {
-                "path": "dist/csv.html"
+                "path": "dist/index.html"
             }
         }
     }
