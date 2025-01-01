@@ -23,5 +23,9 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "viewer": "^0.10.11"
+  },
+  "engines": {
+    "npm": "Please use only pnpm.",
+    "yarn": "Please use only pnpm."
   }
 }

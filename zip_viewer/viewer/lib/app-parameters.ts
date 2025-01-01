@@ -14,6 +14,18 @@ export default class AppParameters {
     return this.#params.get('path')
   }
 
+  static get width(): string {
+    return this.#params.get('width')
+  }
+
+  static get height(): string {
+    return this.#params.get('height')
+  }
+
+  static get lang(): string {
+    return this.#params.get('lang')
+  }
+
   static get theme(): string {
     return this.#params.get('theme').toUpperCase()
   }
