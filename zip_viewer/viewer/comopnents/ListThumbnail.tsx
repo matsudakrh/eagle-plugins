@@ -132,7 +132,9 @@ const ListThumbnail: React.FC<{
             if (!_fileType?.mime?.startsWith('image/')) {
               if (chunks.length > 2) {
                 // 一定量データを読み込んでも判別出来ていない時は終わる
-                readStream.destroy()
+                if (!readStream.destroyed) {
+                  readStream.destroy()
+                }
                 return
               }
             }
