@@ -6,7 +6,7 @@ import React, {
 import {
   Route,
   Routes,
-  HashRouter,
+  MemoryRouter,
 } from 'react-router-dom'
 import yauzl from 'yauzl'
 import { useAppDispatch } from './hooks/redux'
@@ -17,48 +17,52 @@ import { setStructure } from './store/directory-store'
 import Preview from './pages/Preview'
 import Entries from './pages/Entries'
 
-const App = memo(() => {
+const App: React.FC = memo(() => {
   const [entries, setEntries] = useState([])
   const dispatch = useAppDispatch()
   useEffect(() => {
-    let _file
+    let _file: yauzl.ZipFile
 
-    yauzl.open(AppParameters.filePath, { autoClose: false, lazyEntries: true }, (err, zipFile) => {
-      if (err) {
-        console.error(err)
-        return
-      }
-      _file = zipFile
+    window.eagle.item.getSelected().then((result) => {
+      AppParameters.setItem(result[0])
 
-      const entries = []
-      zipFile.readEntry()
-      zipFile.on('entry', (entry) => {
-        entry.encodedFileName = charEncode(entry.fileNameRaw)
-        entry.isDirectory = entry.encodedFileName.endsWith('/')
-        entry.zipFile = zipFile
-        entry.$_uuid ??= window.crypto.randomUUID()
-        entries.push(entry)
+      yauzl.open(AppParameters.filePath, { autoClose: false, lazyEntries: true }, (err, zipFile) => {
+        if (err) {
+          console.error(err)
+          return
+        }
+        _file = zipFile
+
+        const entries = []
         zipFile.readEntry()
-      })
-      zipFile.on('end', () => {
-        entries.sort((a, b) => {
-          const aName = a.encodedFileName
-          const bName = b.encodedFileName
-
-          if (a.isDirectory && !b.isDirectory) {
-            return -1
-          } else if (!a.isDirectory && b.isDirectory) {
-            return 1
-          }
-
-          return aName.localeCompare(bName, 'ja', {
-            sensitivity: 'variant',
-            numeric: true,
-          })
+        zipFile.on('entry', (entry) => {
+          entry.encodedFileName = charEncode(entry.fileNameRaw)
+          entry.isDirectory = entry.encodedFileName.endsWith('/')
+          entry.zipFile = zipFile
+          entry.$_uuid ??= window.crypto.randomUUID()
+          entries.push(entry)
+          zipFile.readEntry()
         })
+        zipFile.on('end', () => {
+          entries.sort((a, b) => {
+            const aName = a.encodedFileName
+            const bName = b.encodedFileName
 
-        dispatch(setStructure(getFolderStructure(entries)))
-        setEntries(entries)
+            if (a.isDirectory && !b.isDirectory) {
+              return -1
+            } else if (!a.isDirectory && b.isDirectory) {
+              return 1
+            }
+
+            return aName.localeCompare(bName, 'ja', {
+              sensitivity: 'variant',
+              numeric: true,
+            })
+          })
+
+          dispatch(setStructure(getFolderStructure(entries)))
+          setEntries(entries)
+        })
       })
     })
 
@@ -69,7 +73,7 @@ const App = memo(() => {
     }
   }, [])
 
-  return (<HashRouter>
+  return (<MemoryRouter>
     <Routes>
       <Route key="entries" index element={<Entries entries={entries} />} />
       <Route
@@ -78,7 +82,7 @@ const App = memo(() => {
         element={<Preview entries={entries} />}
       />
     </Routes>
-  </HashRouter>)
+  </MemoryRouter>)
 })
 
 export default App

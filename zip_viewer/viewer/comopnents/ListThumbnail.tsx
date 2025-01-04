@@ -1,16 +1,15 @@
 import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as FileType from 'file-type'
-import fs from 'fs'
 import { Entry } from 'yauzl'
 import { useAppDispatch } from '../hooks/redux'
 import { setCurrentHoverEntry } from '../store/directory-store'
 import charEncode from '../lib/char-encode'
 import resizeThumbnail from '../lib/resize-thumbnail'
-import AppParameters from '../lib/app-parameters'
+import AppContextMenu from '../lib/app-context-menu'
+import styles from '../styles'
 import folderIcon from '../resources/kkrn_icon_folder_2.png'
 import audioIcon from '../resources/icon_audio.png'
-import styles from '../styles'
 import spinIcon from '../resources/spin.svg'
 
 const { gridStyle } = styles
@@ -36,63 +35,7 @@ const ListThumbnail: React.FC<{
     if (entry.isDirectory) {
       return
     }
-    const items = [{
-      id: 'export',
-      label: 'ファイルをエクスポート',
-      click: async () => {
-        entry.zipFile.openReadStream(entry, null, (err, readStream) => {
-          if (err) {
-            return
-          }
-          const chunks = []
-          readStream.on('data', (chunk) => {
-            chunks.push(chunk)
-          })
-          readStream.on('end', () => {
-            const buffer = Buffer.concat(chunks)
-            const blob = new Blob([buffer], { type: fileType.mime })
-            const url = URL.createObjectURL(blob)
-            // ダウンロードリンクを作成
-            const a = document.createElement('a')
-            a.href = url
-            a.download = entry.encodedFileName
-            a.click()
-
-            URL.revokeObjectURL(url);
-          })
-        })
-      }
-    }]
-    if  (fileType?.mime.startsWith('image/')) {
-      items.push(      {
-        id: 'thumbnail',
-        label: 'サムネイルに設定',
-        click: async () => {
-          if (!fileType || !fileType.mime.startsWith('image/')) {
-            alert('画像ではないファイルは設定出来ません')
-            return
-          }
-          let item = await window.eagle.item.getById(AppParameters.identify)
-          const tmpPath = window.eagle.os.tmpdir()
-          const filePath = `${tmpPath}/${words[words.length - 1]}`
-          fs
-            .promises
-            .writeFile(
-              filePath,
-              src.replace('data:' + fileType.mime + ';base64,',''),
-              { encoding: 'base64' }
-            )
-            .then(() => {
-              item.setCustomThumbnail(filePath).then((result) => {
-                console.log('result =>  ', result)
-              })
-            }).catch((result) => {
-            console.log(result)
-          })
-        }
-      })
-    }
-    window.eagle.contextMenu.open(items)
+    AppContextMenu.entries({ entry, fileType, src })
   }
 
   useLayoutEffect(() => {
@@ -116,9 +59,18 @@ const ListThumbnail: React.FC<{
           }
 
           let isImage = null
-          const chunks = []
-          let _fileType
+          const chunks: Uint8Array[] = []
+          let _fileType: FileType.FileTypeResult
           readStream.on('data', (chunk) => {
+            if (!_fileType?.mime?.startsWith('image/')) {
+              if (chunks.length > 2) {
+                // 一定量データを読み込んでも判別出来ていない時は終わる
+                // if (!readStream.destroyed && !readStream.closed) {
+                //   readStream.destroy()
+                // }
+                return
+              }
+            }
             chunks.push(chunk)
 
             if (isImage === true) {
@@ -127,16 +79,6 @@ const ListThumbnail: React.FC<{
 
             if (entry.encodedFileName.endsWith('txt')) {
               return
-            }
-
-            if (!_fileType?.mime?.startsWith('image/')) {
-              if (chunks.length > 2) {
-                // 一定量データを読み込んでも判別出来ていない時は終わる
-                if (!readStream.destroyed) {
-                  readStream.destroy()
-                }
-                return
-              }
             }
 
             FileType.fromBuffer(Buffer.concat(chunks)).then((fileType) => {
@@ -178,9 +120,12 @@ const ListThumbnail: React.FC<{
 
               return
             }
-            resizeThumbnail(buffer, (buffer) => {
-              setSrc(`data:${_fileType.mime};base64,${buffer.toString('base64')}`)
-            })
+
+            if (isImage) {
+              resizeThumbnail(buffer, (buffer) => {
+                setSrc(`data:${_fileType.mime};base64,${buffer.toString('base64')}`)
+              })
+            }
           })
         })
       }

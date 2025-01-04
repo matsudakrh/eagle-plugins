@@ -2,15 +2,12 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useKey } from 'react-use'
 import * as FileType from 'file-type'
-import fs from 'fs'
 import yauzl from 'yauzl'
-import { EagleResources } from 'eagle'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import AppParameters from '../lib/app-parameters'
-import resizeThumbnail from '../lib/resize-thumbnail'
 import charEncode from '../lib/char-encode'
-import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
 import { setCurrentDirectory } from '../store/directory-store'
+import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
+import AppContextMenu from '../lib/app-context-menu'
 import PdfViewer from '../comopnents/PdfViewer'
 import AudioPlayer from '../comopnents/AudioPlayer'
 import VideoPlayer from '../comopnents/VideoPlayer'
@@ -28,7 +25,7 @@ const Preview: React.FC<{
   const [imgSrc, setImgSrc] = useState(spinIcon)
   const [text, setText] = useState('')
   const navigate = useNavigate()
-  const [fileType, setFileType] = useState<FileType.FileTypeResult | null>()
+  const [fileType, setFileType] = useState<FileType.FileTypeResult | undefined>()
   const entry = useMemo(() => {
     if (location.state?.fullpath) {
       return entries.find(entry => entry.encodedFileName === location.state.fullpath)
@@ -106,92 +103,11 @@ const Preview: React.FC<{
   useKey('Backspace',  handleBack, {}, [])
 
   const handleContextMenu = () => {
-    const items: EagleResources.ContextMenuItem[] = [
-      {
-        id: 'export',
-        label: 'ファイルをエクスポート',
-        click: async () => {
-          entry.zipFile.openReadStream(entry, null, (err, readStream) => {
-            if (err) {
-              return
-            }
-            const chunks = []
-            readStream.on('data', (chunk) => {
-              chunks.push(chunk)
-            })
-            readStream.on('end', () => {
-              const buffer = Buffer.concat(chunks)
-              const blob = new Blob([buffer], { type: fileType.mime })
-              const url = URL.createObjectURL(blob)
-              // ダウンロードリンクを作成
-              const a = document.createElement('a')
-              a.href = url
-              a.download = words[words.length - 1]
-              a.click()
-
-              URL.revokeObjectURL(url);
-            })
-          })
-        }
-      }
-    ]
-
-    if (fileType?.mime.startsWith('image')) {
-      const handleClick = async (size) => {
-        if (!fileType || !fileType.mime.startsWith('image/')) {
-          alert('画像ではないファイルは設定出来ません')
-          return
-        }
-
-        resizeThumbnail(buffer, async (buffer) => {
-          let item = await window.eagle.item.getById(AppParameters.identify)
-          const tmpPath = window.eagle.os.tmpdir()
-          const filePath = `${tmpPath}/${words[words.length - 1]}`
-          fs
-            .promises
-            .writeFile(
-              filePath,
-              buffer.toString('base64'),
-              { encoding: 'base64' }
-            )
-            .then(() => {
-              item.setCustomThumbnail(filePath).then((result) => {
-                console.log('result =>  ', result)
-              })
-            }).catch((result) => {
-            console.log(result)
-          })
-        }, { width: size })
-      }
-      items.push({
-        id: 'thumbnail',
-        label: 'サムネイルに設定',
-        submenu: [
-          {
-            id: 'small',
-            label: '小',
-            click: () => handleClick(400),
-          },
-          {
-            id: 'middle',
-            label: '中',
-            click: () => handleClick(700),
-          },
-          {
-            id: 'large',
-            label: '大',
-            click: () => handleClick(1000),
-          },
-          {
-            id: 'original',
-            label: 'オリジナル',
-            click: () => handleClick(null),
-          },
-        ],
-      })
-    }
-
-    window.eagle.contextMenu.open(items)
+    AppContextMenu.preview({
+      entry,
+      fileType,
+      buffer,
+    })
   }
 
   // ファイルタイプの取得のみを行う
@@ -205,7 +121,7 @@ const Preview: React.FC<{
         return
       }
 
-      const chunks = []
+      const chunks: Uint8Array[] = []
       readStream.on('data', (chunk) => {
         chunks.push(chunk)
         const binary = Buffer.concat(chunks)

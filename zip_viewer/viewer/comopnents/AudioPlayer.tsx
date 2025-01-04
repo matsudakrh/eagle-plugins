@@ -96,7 +96,7 @@ const AudioPlayer: React.FC<{
     audioRef.current?.pause()
 
     entry.zipFile.openReadStream(entry, null, (err, readStream) => {
-      const chunks = []
+      const chunks: Uint8Array[] = []
 
       readStream.on('data', chunk => {
         chunks.push(chunk)

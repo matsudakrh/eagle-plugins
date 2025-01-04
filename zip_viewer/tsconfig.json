@@ -4,6 +4,11 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "jsx": "react"
-  }
+    "jsx": "preserve",
+    "allowJs": false,
+    "checkJs": true,
+    "removeComments": true,
+    "strict": false, // TODO: trueに対応したい
+  },
+  "exclude": ["node_modules"]
 }
