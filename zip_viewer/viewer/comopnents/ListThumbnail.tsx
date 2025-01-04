@@ -1,5 +1,5 @@
 import React, { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import * as FileType from 'file-type'
 import { Entry } from 'yauzl'
 import { useAppDispatch } from '../hooks/redux'

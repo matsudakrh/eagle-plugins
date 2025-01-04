@@ -7,7 +7,7 @@ import {
   Route,
   Routes,
   MemoryRouter,
-} from 'react-router-dom'
+} from 'react-router'
 import yauzl from 'yauzl'
 import { useAppDispatch } from './hooks/redux'
 import AppParameters from './lib/app-parameters'
