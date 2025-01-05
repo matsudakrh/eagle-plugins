@@ -1,0 +1,29 @@
+.preview {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
+}
+
+.body {
+  position: relative;
+  overflow: auto;
+}
+
+.image {
+  display: block;
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.text_container {
+  white-space: pre-wrap;
+  padding: 24px;
+  overflow: auto;
+}

@@ -4,6 +4,7 @@ import { Entry } from 'yauzl'
 import { DBConfig } from '../db/config'
 import { putVideoObject, VideoObject } from '../db/stores/video-store'
 import AppParameters from '../lib/app-parameters'
+import styles from './VideoPlayer.module.scss'
 import spinIcon from '../resources/spin.svg'
 
 const VideoPlayer: React.FC<{
@@ -103,32 +104,14 @@ const VideoPlayer: React.FC<{
     <video
       ref={videoRef}
       src={src}
-      style={{
-        display: src ? 'block' : 'none',
-        maxWidth: '100%',
-        maxHeight: '100%',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        margin: 'auto',
-      }}
+      className={src ? styles.video : styles.video_hidden}
       autoPlay
       controls
       controlsList="nofullscreen"
       onContextMenu={onContextMenu}
     ></video>
     <img
-      style={{
-        display: src ? 'none' : 'block',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        margin: 'auto',
-      }}
+      className={src ? styles.loading_hidden : styles.loading}
       src={spinIcon}
       alt=""
     />

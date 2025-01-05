@@ -1,15 +1,12 @@
 import * as React from 'react'
 import { useAppSelector } from '../hooks/redux'
+import styles from './EntriesFooter.module.scss'
 
 const EntriesFooter: React.FC = () => {
   const currentHoverEntryName = useAppSelector(state => state.directory.currentHoverEntryName)
 
   return <div
-    style={{
-      borderTop: '1px solid #333',
-      padding: '4px',
-      overflow: 'hidden',
-    }}
+    className={styles.footer}
   >
     {currentHoverEntryName ? currentHoverEntryName : '-'}
   </div>

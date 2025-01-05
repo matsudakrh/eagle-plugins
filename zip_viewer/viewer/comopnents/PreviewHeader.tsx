@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from './PreviewHeader.module.scss'
 
 const PreviewHeader: React.FC<{
   name: string,
@@ -6,12 +7,7 @@ const PreviewHeader: React.FC<{
   onPrev: () => void,
   onNext: () => void,
 }> = ({ name, onBack, onPrev, onNext }) => {
-  return <header style={{
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '8px',
-    borderBottom: '',
-  }}>
+  return <header className={styles.header}>
     <div>
       <button onClick={onBack}>
         戻る

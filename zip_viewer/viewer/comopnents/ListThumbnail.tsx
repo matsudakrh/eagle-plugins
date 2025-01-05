@@ -7,12 +7,10 @@ import { setCurrentHoverEntry } from '../store/directory-store'
 import charEncode from '../lib/char-encode'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import AppContextMenu from '../lib/app-context-menu'
-import styles from '../styles'
+import styles from './ListThumbnail.module.scss'
 import folderIcon from '../resources/kkrn_icon_folder_2.png'
 import audioIcon from '../resources/icon_audio.png'
 import spinIcon from '../resources/spin.svg'
-
-const { gridStyle } = styles
 
 const ListThumbnail: React.FC<{
   entry: Entry
@@ -157,7 +155,6 @@ const ListThumbnail: React.FC<{
 
   return (
     <div
-      className="list-thumbnail"
       ref={ref}
       onDoubleClick={handleDbClick}
       onPointerEnter={() =>
@@ -165,23 +162,13 @@ const ListThumbnail: React.FC<{
       )}
       onPointerLeave={() => dispatch(setCurrentHoverEntry(null))}
     >
-      <style>{`
-        .img-container {
-          padding: 4px;
-          border: 1px solid #fff;
-        }
-        .img-container img {
-            max-width: 100%;
-            max-height: 100%;
-          }
-      `}</style>
       <div>
         {src.startsWith('blob')
-          ? <div className="img-container"><img src={src} alt="" /></div>
-          : <img style={gridStyle.img} onContextMenu={handleContextMenu} src={src} alt="" />
+          ? <div className={styles.imgContainer}><img src={src} alt="" /></div>
+          : <img className={styles.img} onContextMenu={handleContextMenu} src={src} alt="" />
         }
       </div>
-      <p style={gridStyle.p}>{words[words.length - 1]}</p>
+      <p className={styles.file_name}>{words[words.length - 1]}</p>
     </div>
   )
 })

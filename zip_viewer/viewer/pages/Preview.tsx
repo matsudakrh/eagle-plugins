@@ -12,6 +12,7 @@ import PdfViewer from '../comopnents/PdfViewer'
 import AudioPlayer from '../comopnents/AudioPlayer'
 import VideoPlayer from '../comopnents/VideoPlayer'
 import PreviewHeader from '../comopnents/PreviewHeader'
+import styles from './Preview.module.scss'
 import spinIcon from '../resources/spin.svg'
 
 const Preview: React.FC<{
@@ -191,29 +192,19 @@ const Preview: React.FC<{
       return <img
         src={imgSrc}
         alt=""
-        style={{
-          display: 'block',
-          margin: 'auto',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          maxWidth: '100%',
-          maxHeight: '100%'
-        }}
+        className={styles.image}
         onContextMenu={fileType?.mime.startsWith('image/') ? handleContextMenu : null}
       />
     }
 
     if (entry.fileName.endsWith('txt')) {
-      return <div style={{ whiteSpace: 'pre-wrap', padding: '24px', overflow: 'auto' }}>
+      return <div className={styles.text_container}>
         {text}
       </div>
     }
 
     if (fileType?.mime === 'application/pdf' && buffer) {
-      return <PdfViewer buffer={buffer} />
+      return <PdfViewer key={entry.encodedFileName} buffer={buffer} />
     }
 
     if (fileType?.mime.startsWith('audio/')) {
@@ -229,19 +220,14 @@ const Preview: React.FC<{
     </div>
   }
 
-  return <div style={{
-    width: '100vw',
-    height: '100vh',
-    display: 'grid',
-    gridTemplateRows: 'min-content 1fr min-content',
-  }}>
+  return <div className={styles.preview}>
     <PreviewHeader
       name={words[words.length - 1]}
       onBack={handleBack}
       onPrev={preEntry ? handlePrev : null}
       onNext={nextEntry ? handleNext : null}
     />
-    <div style={{ position: 'relative', overflow: 'auto' }}>
+    <div className={styles.body}>
       {detailComponent()}
     </div>
   </div>

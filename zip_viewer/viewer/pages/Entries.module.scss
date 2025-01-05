@@ -1,0 +1,34 @@
+.entries {
+  height: 100vh;
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
+}
+
+.images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(min-content, 300px));
+  gap: 8px;
+  max-width: 100vw;
+  overflow: auto;
+  padding: 24px;
+}
+
+.img {
+  width: 100%;
+}
+
+.file_name {
+  margin: 8px 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.dirName {
+  white-space: pre-wrap;
+  padding-left: 12px;
+}

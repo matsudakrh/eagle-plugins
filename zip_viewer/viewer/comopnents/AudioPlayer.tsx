@@ -7,6 +7,7 @@ import AppParameters from '../lib/app-parameters'
 import VolumeBar from './AudioPlayer/VolumeBar'
 import SeekBar from './AudioPlayer/SeekBar'
 import CurrentTime from './AudioPlayer/CurrentTime'
+import styles from './AudioPlayer.module.scss'
 import iconSpin from '../resources/spin.svg'
 
 const AudioPlayer: React.FC<{
@@ -16,7 +17,9 @@ const AudioPlayer: React.FC<{
   const audioRef = useRef(null)
   const volume = useAppSelector(state => state.audio.volume)
   const [src, setSrc] = useState<string>()
-  const [thumb, setThumb] = useState<string>()
+  const thumb = useMemo(() => {
+    return AppParameters.thumbnailPath
+  }, [])
   const [audioBuffer, setAudioBuffer] = useState<AudioBuffer>()
   const [isPlaying, setIsPlaying] = useState(false)
   const audioContext = useMemo(() => {
@@ -117,15 +120,6 @@ const AudioPlayer: React.FC<{
     }
   }, [entry])
 
-  useEffect(() => {
-    const getThumbnail = async () => {
-      let item = await window.eagle.item.getById(AppParameters.identify)
-      setThumb(item.thumbnailPath)
-    }
-
-    getThumbnail().catch(() => {})
-  }, [])
-
   const handleClick = () => {
     if (!audioRef.current) {
       return
@@ -138,43 +132,26 @@ const AudioPlayer: React.FC<{
     }
   }
 
-  return <div style={{ display: 'grid', gridTemplateRows: '1fr 80px', height: '100%' }}>
-    <div onContextMenu={onContextMenu}
-         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-      <img src={thumb} alt="" style={{ maxWidth: '100%', maxHeight: '100%', position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, margin: 'auto' }} />
+  return <div className={styles.audio_player}>
+    <div onContextMenu={onContextMenu} className={styles.thumbnail_container}>
+      <img src={thumb} alt="" className={styles.thumbnail} />
     </div>
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: 'min-content min-content min-content 1fr',
-      borderTop: '1px solid #ffffff22',
-      position: 'relative',
-    }}>
+    <div className={styles.body}>
       {src ? null : <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          zIndex: 10,
-          width: '100%',
-          height: '100%',
-          background: 'rgba(100, 100, 100, 0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+        className={styles.loading_container}
       >
         <img
           src={iconSpin}
           alt=""
         />
       </div>}
-      <div onClick={handleClick} style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {isPlaying ? <span className="video_pause"></span> : <span className="video_play"></span>}
+      <div onClick={handleClick} className={styles.play_button_container}>
+        {isPlaying ? <span className={styles.video_pause}></span> : <span className={styles.video_play}></span>}
       </div>
-      <div style={{ padding: '8px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+      <div className={styles.current_time_container}>
         <CurrentTime audio={audioRef.current} />
       </div>
-      <div style={{ padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className={styles.volume_bar_container}>
         <VolumeBar />
       </div>
       <div>
@@ -184,7 +161,7 @@ const AudioPlayer: React.FC<{
     <audio
       ref={audioRef}
       src={src}
-      style={{ display: 'none' }}
+      className={styles.audio}
       controls
       autoPlay
       onPlay={() => setIsPlaying(true)}

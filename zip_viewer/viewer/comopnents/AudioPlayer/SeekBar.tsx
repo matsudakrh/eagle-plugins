@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import drawWave from '../../lib/draw-wave'
+import styles from './SeekBar.module.scss'
 
 const SeekBar: React.FC<{
   audioBuffer: AudioBuffer
@@ -81,33 +82,14 @@ const SeekBar: React.FC<{
     document.addEventListener('pointerup', handlePointerUp)
   }
 
-  return <div style={{
-    height: '100%',
-    position: 'relative',
-  }}>
+  return <div className={styles.seekbar}>
     <canvas
       ref={waveCanvas}
-      style={{
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        margin: 'auto',
-        zIndex: 1,
-        width: '100%',
-        maxHeight: '100%',
-      }}
+      className={styles.canvas}
     ></canvas>
     <canvas
       ref={canvas}
-      style={{
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        margin: 'auto',
-        zIndex: 2,
-        width: '100%',
-        maxHeight: '100%',
-      }}
+      className={styles.canvas}
       onPointerDown={handlePointerDown}
     >
     </canvas>

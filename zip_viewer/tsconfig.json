@@ -8,7 +8,7 @@
     "allowJs": false,
     "checkJs": true,
     "removeComments": true,
-    "strict": false, // TODO: trueに対応したい
+    "strict": false // TODO: trueに対応したい
   },
   "exclude": ["node_modules"]
 }

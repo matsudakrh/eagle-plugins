@@ -6,6 +6,7 @@
 		"start": "parcel watch viewer/index.html --dist-dir dist --public-url ./"
 	},
 	"devDependencies": {
+		"@parcel/transformer-sass": "2.13.3",
 		"@types/eagle": "link:../@types/eagle",
 		"@types/file-type": "^10.9.3",
 		"@types/lodash": "^4.17.13",

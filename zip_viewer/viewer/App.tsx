@@ -6,7 +6,7 @@ import React, {
 import {
   Route,
   Routes,
-  MemoryRouter,
+  HashRouter,
 } from 'react-router'
 import yauzl from 'yauzl'
 import { useAppDispatch } from './hooks/redux'
@@ -73,7 +73,7 @@ const App: React.FC = memo(() => {
     }
   }, [])
 
-  return (<MemoryRouter>
+  return (<HashRouter>
     <Routes>
       <Route key="entries" index element={<Entries entries={entries} />} />
       <Route
@@ -82,7 +82,7 @@ const App: React.FC = memo(() => {
         element={<Preview entries={entries} />}
       />
     </Routes>
-  </MemoryRouter>)
+  </HashRouter>)
 })
 
 export default App

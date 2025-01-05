@@ -1,0 +1,27 @@
+.inputRange {
+  appearance: none;
+  width: 160px;
+  height: 12px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #6dd5ff 100%, #dddddd 30%);
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    background: #06b6d4;
+    box-shadow: none;
+  }
+
+  &::-moz-range-thumb {
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 9999px;
+    background: #06b6d4;
+    box-shadow: none;
+  }
+}

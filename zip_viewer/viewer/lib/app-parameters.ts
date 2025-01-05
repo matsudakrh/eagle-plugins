@@ -22,6 +22,9 @@ export default class AppParameters {
     return this.#item.filePath
   }
 
+  static get thumbnailPath(): string {
+    return this.#item.thumbnailPath
+  }
   static get width(): string {
     return this.#params.get('width')
   }

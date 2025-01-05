@@ -6,11 +6,10 @@ import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
 import { setCurrentDirectory, setCurrentHoverEntry } from '../store/directory-store'
 import ListThumbnail from '../comopnents/ListThumbnail'
 import EntriesFooter from '../comopnents/EntriesFooter'
-import styles from '../styles'
+import styles from './Entries.module.scss'
 import folderIcon from '../resources/kkrn_icon_folder_2.png'
 
 const { Entry } = yauzl
-const { gridStyle } = styles
 
 const Entries: React.FC<{
   entries: yauzl.Entry[]
@@ -85,23 +84,16 @@ const Entries: React.FC<{
     dispatch(setCurrentDirectory(dir))
   }, [currentDirectory])
 
-  return <div style={{
-    height: '100vh',
-    display: 'grid',
-    gridTemplateRows: 'min-content 1fr min-content',
-  }}>
+  return <div className={styles.entries}>
     <div>
       {parentDirectory ? <span onClick={handleBack}>
         前のフォルダに戻る
       </span> : null}
-      <span style={{
-        whiteSpace: 'pre-wrap',
-        paddingLeft: '12px',
-      }}>
+      <span className={styles.dirName}>
        {currentDirectory?.[MetaKeys.NAME] ? `「${currentDirectory[MetaKeys.NAME]}」` : null}
       </span>
     </div>
-    <div id="images" style={gridStyle.images}>
+    <div id="images" className={styles.images}>
       {
         visibleEntries.map((entry) => {
           const isEntry = entry instanceof Entry
@@ -116,7 +108,6 @@ const Entries: React.FC<{
 
           return <div
             key={entry[MetaKeys.UUID]}
-            className="dir-thumb"
             onDoubleClick={() => handleOpenDirectory(entry)}
             onMouseOver={() =>
               dispatch(setCurrentHoverEntry(entry[MetaKeys.FULL_PATH])
@@ -124,9 +115,9 @@ const Entries: React.FC<{
             onPointerLeave={() => dispatch(setCurrentHoverEntry(null))}
           >
             <div>
-              <img style={gridStyle.img} src={folderIcon} alt="" />
+              <img className={styles.img} src={folderIcon} alt="" />
             </div>
-            <p style={gridStyle.p}>{entry.$_name}</p>
+            <p className={styles.file_name}>{entry.$_name}</p>
           </div>
         })
       }

@@ -4,6 +4,7 @@ import * as pdfjsDist from 'pdfjs-dist'
 import fs from 'fs'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import AppParameters from '../lib/app-parameters'
+import styles from './PdfViewer.module.scss'
 
 // ページを都度描画するとテンポが悪いので前後何枚かを描画しておきたい
 // あるいは全ページを一気にレンダリングしてサムネ一覧などと兼ねる
@@ -136,17 +137,7 @@ const PdfViewer: React.FC<{ buffer: Buffer }> = memo(({ buffer }) => {
   return <canvas
     ref={canvas}
     onContextMenu={handleContextMenu}
-    style={{
-      display: 'block',
-      margin: 'auto',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      maxWidth: '100%',
-      maxHeight: '100%',
-    }}
+    className={styles.canvas}
   ></canvas>
 })
 

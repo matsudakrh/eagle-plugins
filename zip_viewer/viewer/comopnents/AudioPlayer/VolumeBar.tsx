@@ -1,6 +1,7 @@
 import React from 'react'
 import { changeVolume } from '../../store/audio-store'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import styles from './VolumeBar.module.scss'
 
 const VolumeBar = () => {
   const volume = useAppSelector(root => root.audio.volume)
@@ -9,7 +10,7 @@ const VolumeBar = () => {
   return (
     <input
       type="range"
-      className="inputRange"
+      className={styles.inputRange}
       value={volume}
       max="1"
       step="0.01"
