@@ -108,6 +108,16 @@ export namespace EagleTools {
     ) => Promise<string>
   }
 
+  type Notification = {
+    show: (options: {
+      title?: string
+      description?: string
+      icon?: string // base64 or URL
+      mute?: boolean // SE
+      duration?: number // milliseconds
+    }) => Promise<void>
+  }
+
   type ContextMenu = {
     open: (menuItems: EagleResources.ContextMenuItem[]) => void
   }

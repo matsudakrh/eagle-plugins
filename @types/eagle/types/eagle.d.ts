@@ -23,6 +23,7 @@ declare global {
       library: EagleTools.Library
       app: EagleTools.App
       os: EagleTools.OS
+      notification: EagleTools.Notification
       contextMenu: EagleTools.ContextMenu
       shell: EagleTools.Shell
 
