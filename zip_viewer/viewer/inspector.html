@@ -25,17 +25,18 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    font-size: 16px;
   }
 
   #lastFileName {
+    white-space: pre-wrap;
     font-size: 12px;
+    color: #aaa;
   }
   </style>
 </head>
 <body>
-  <div>
-    前回開いていたファイル
-  </div>
+  <div>最後に開いたファイル</div>
   <p id="lastFileName">ー</p>
   <script src="./initialisers/inspector.ts" type="module"></script>
 </body>
