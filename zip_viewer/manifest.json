@@ -17,6 +17,9 @@
             },
             "viewer": {
                 "path": "dist/index.html"
+            },
+            "inspector": {
+                "path": "dist/inspector.html"
             }
         }
     }

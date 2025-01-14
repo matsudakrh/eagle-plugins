@@ -3,9 +3,12 @@ import { useLocation, useNavigate } from 'react-router'
 import { useKey } from 'react-use'
 import * as FileType from 'file-type'
 import yauzl from 'yauzl'
+import { putInfoObject } from '../db/stores/info'
+import { DBConfig } from '../db/config'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import charEncode from '../lib/char-encode'
 import { setCurrentDirectory } from '../store/directory-store'
+import AppParameters from '../lib/app-parameters'
 import { findObjectByCondition, MetaKeys } from '../lib/zip-tree'
 import AppContextMenu from '../lib/app-context-menu'
 import PdfViewer from '../comopnents/PdfViewer'
@@ -122,7 +125,7 @@ const Preview: React.FC<{
         return
       }
 
-      const chunks: Uint8Array[] = []
+      const chunks: Uint8Array<ArrayBuffer>[] = []
       readStream.on('data', (chunk) => {
         chunks.push(chunk)
         const binary = Buffer.concat(chunks)
@@ -140,6 +143,37 @@ const Preview: React.FC<{
         })
       })
     })
+
+    let db: IDBDatabase
+    const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
+
+    openReq.onsuccess = (event) => {
+      db = (event.target as IDBOpenDBRequest).result
+    }
+
+    const putData = () => {
+      const putReq = putInfoObject(db, {
+        itemId: AppParameters.identify,
+        lastFilePath: entry.encodedFileName,
+      })
+
+      putReq.onsuccess = () => {
+        console.log('put data success.')
+      }
+
+      putReq.onerror = (event) => {
+        console.log(event)
+      }
+
+      db.close()
+    }
+
+    window.addEventListener('beforeunload', putData)
+
+    return () => {
+      window.removeEventListener('beforeunload', putData)
+      putData()
+    }
   }, [entry, location.state])
 
   useEffect(() => {

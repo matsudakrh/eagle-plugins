@@ -43,12 +43,7 @@ export default class AppContextMenu {
     ]
 
     if (fileType?.mime.startsWith('image')) {
-      const handleClick = async (size) => {
-        if (!fileType || !fileType.mime.startsWith('image/')) {
-          alert('画像ではないファイルは設定出来ません')
-          return
-        }
-
+      const handleClick = async (size: number) => {
         resizeThumbnail(buffer, async (buffer) => {
           let item = await window.eagle.item.getById(AppParameters.identify)
           const tmpPath = window.eagle.os.tmpdir()

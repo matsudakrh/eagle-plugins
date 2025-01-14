@@ -1,6 +1,7 @@
 import { DBConfig } from '../db/config'
 import createAudioStore from '../db/stores/audio-store'
 import createVideoStore from '../db/stores/video-store'
+import createInfoStore from '../db/stores/info'
 
 window.eagle.onPluginCreate((plugin) => {
   // オブジェクトストアの作成・削除はDBの更新時しかできないので、バージョンを指定して更新
@@ -18,6 +19,9 @@ window.eagle.onPluginCreate((plugin) => {
     }
     if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Video)) {
       createVideoStore(db)
+    }
+    if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Info)) {
+      createInfoStore(db)
     }
   }
   openReq.onsuccess = (event)=> {

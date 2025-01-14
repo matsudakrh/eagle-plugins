@@ -14,8 +14,12 @@ export default class AppParameters {
     return window.eagle.plugin.manifest.id
   }
 
+  static get paramsId(): string {
+    return this.#params.get('id')
+  }
+
   static get identify(): string {
-    return this.#item.id
+    return this.#item?.id
   }
 
   static get filePath(): string {

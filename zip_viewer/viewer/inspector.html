@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>zip Viewer</title>
+  <style>
+  :root {
+    --color: #fff;
+  }
+
+  body {
+    color: var(--color);
+  }
+
+  body[theme="LIGHT"],
+  body[theme="LIGHTGRAY"] {
+    --color: #000;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  </style>
+</head>
+<body>
+  <div>
+    前回開いていたファイル
+    <p id="lastFileName">ー</p>
+  </div>
+  <script src="./initialisers/inspector.ts" type="module"></script>
+</body>
+</html>

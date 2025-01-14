@@ -6,9 +6,7 @@ const resizeThumbnail = (
   options: ResizeOptions = { width: 400 },
 ) => {
   sharp(binary)
-    .resize({
-      width: options.width,
-    })
+    .resize(options)
     .toBuffer()
     .then((buffer) => {
       callback(buffer)
