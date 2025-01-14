@@ -149,9 +149,7 @@ const Preview: React.FC<{
 
     openReq.onsuccess = (event) => {
       db = (event.target as IDBOpenDBRequest).result
-    }
 
-    const putData = () => {
       const putReq = putInfoObject(db, {
         itemId: AppParameters.identify,
         lastFilePath: entry.encodedFileName,
@@ -164,15 +162,6 @@ const Preview: React.FC<{
       putReq.onerror = (event) => {
         console.log(event)
       }
-
-      db.close()
-    }
-
-    window.addEventListener('beforeunload', putData)
-
-    return () => {
-      window.removeEventListener('beforeunload', putData)
-      putData()
     }
   }, [entry, location.state])
 

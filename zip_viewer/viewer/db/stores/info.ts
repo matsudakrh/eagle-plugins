@@ -16,6 +16,9 @@ export type InfoObject = {
 export const putInfoObject = (db: IDBDatabase, data: InfoObject): IDBRequest => {
   const transaction = db.transaction(DBConfig.STORE_NAMES.Info, 'readwrite')
   const store = transaction.objectStore(DBConfig.STORE_NAMES.Info)
+  transaction.oncomplete = () => {
+    db.close()
+  }
   return store.put(data)
 }
 
