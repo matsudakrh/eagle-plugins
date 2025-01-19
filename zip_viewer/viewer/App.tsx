@@ -9,10 +9,12 @@ import {
   HashRouter,
 } from 'react-router'
 import yauzl from 'yauzl'
+import { putInfoObject } from './db/stores/info'
+import { DBConfig } from './db/config'
 import { useAppDispatch } from './hooks/redux'
 import AppParameters from './lib/app-parameters'
 import charEncode from './lib/char-encode'
-import { getFolderStructure } from './lib/zip-tree'
+import { getFolderStructure, ignoreNames } from './lib/zip-tree'
 import { setStructure } from './store/directory-store'
 import Preview from './pages/Preview'
 import Entries from './pages/Entries'
@@ -34,6 +36,7 @@ const App: React.FC = memo(() => {
         _file = zipFile
 
         const entries = []
+        let count = 0
         zipFile.readEntry()
         zipFile.on('entry', (entry) => {
           entry.encodedFileName = charEncode(entry.fileNameRaw)
@@ -41,6 +44,9 @@ const App: React.FC = memo(() => {
           entry.zipFile = zipFile
           entry.$_uuid ??= window.crypto.randomUUID()
           entries.push(entry)
+          if (!entry.isDirectory && ignoreNames.every(pattern => !entry.encodedFileName.endsWith(pattern))) {
+            count++
+          }
           zipFile.readEntry()
         })
         zipFile.on('end', () => {
@@ -62,6 +68,23 @@ const App: React.FC = memo(() => {
 
           dispatch(setStructure(getFolderStructure(entries)))
           setEntries(entries)
+
+          const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
+          openReq.onsuccess = function () {
+            const db = this.result
+            const putReq = putInfoObject(db, {
+              itemId: AppParameters.identify,
+              count,
+            })
+
+            putReq.onsuccess = () => {
+              console.log('put data success.')
+            }
+
+            putReq.onerror = (event) => {
+              console.log(event)
+            }
+          }
         })
       })
     })

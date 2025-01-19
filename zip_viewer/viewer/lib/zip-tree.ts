@@ -8,7 +8,7 @@ export const MetaKeys = {
   FULL_PATH: '$_fullpath',
 }
 
-const ignoreNames = [
+export const ignoreNames = [
   '__macosx',
   'thumbs.db',
   'desktop.ini',

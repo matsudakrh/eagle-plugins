@@ -10,7 +10,8 @@ const createInfoStore = (db: IDBDatabase) => {
 
 export type InfoObject = {
   itemId: string
-  lastFilePath: string
+  lastFilePath?: string
+  count?: number
 }
 
 export const putInfoObject = (db: IDBDatabase, data: InfoObject): IDBRequest => {

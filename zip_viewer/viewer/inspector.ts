@@ -1,14 +1,16 @@
-import './theme'
-import { DBConfig } from '../db/config'
-import AppParameters from '../lib/app-parameters'
+import './initialisers/theme'
+import { DBConfig } from './db/config'
+import AppParameters from './lib/app-parameters'
+import { InfoObject } from './db/stores/info'
 
 window.eagle.onPluginCreate(() => {
   const renderLastFile = () => {
     let db: IDBDatabase
+    // TODO: inspector側でonupgradeneededが発火しない確証がない
     const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
-    openReq.onsuccess = (event) => {
-      db = (event.target as IDBOpenDBRequest).result
+    openReq.onsuccess = function (_) {
+      db = this.result
       if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Info)) {
         return
       }
@@ -19,9 +21,14 @@ window.eagle.onPluginCreate(() => {
 
       getReq.onsuccess = () => {
         if (getReq.result) {
+          const data: InfoObject = getReq.result
           const p = document.getElementById('lastFileName')
-          if (p) {
-            p.textContent =  getReq.result.lastFilePath.split('/').join('/\n')
+          if (p && data.lastFilePath) {
+            p.textContent = data.lastFilePath.split('/').join('/\n')
+          }
+          const count = document.getElementById('count')
+          if (count) {
+            count.textContent = `${data.count}` || 'ー'
           }
         }
       }
