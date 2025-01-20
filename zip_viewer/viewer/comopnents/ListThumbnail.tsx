@@ -7,6 +7,7 @@ import { setCurrentHoverEntry } from '../store/directory-store'
 import charEncode from '../lib/char-encode'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import AppContextMenu from '../lib/app-context-menu'
+import AppMetadata from '../lib/app-metadata'
 import styles from './ListThumbnail.module.scss'
 import folderIcon from '../resources/kkrn_icon_folder_2.png'
 import audioIcon from '../resources/icon_audio.png'
@@ -45,6 +46,13 @@ const ListThumbnail: React.FC<{
     const handler = ([intersection]) => {
       if (intersection.isIntersecting) {
         observer.disconnect()
+
+        const generatedThumb = AppMetadata.getThumbnail(entry.encodedFileName)
+        if (generatedThumb) {
+          setSrc(generatedThumb)
+          return
+        }
+
         if (entry.encodedFileName.endsWith('/')) {
           setSrc(folderIcon)
           return
@@ -91,6 +99,10 @@ const ListThumbnail: React.FC<{
 
                 if (fileType.mime.startsWith('audio/')) {
                   setSrc(audioIcon)
+                  AppMetadata.setThumbnail({
+                    key: entry.encodedFileName,
+                    src: audioIcon,
+                  })
                 }
               }
             })
@@ -114,6 +126,11 @@ const ListThumbnail: React.FC<{
 
               canvas.toBlob((blob) => {
                 setSrc(URL.createObjectURL(blob))
+
+                AppMetadata.setThumbnail({
+                  key: entry.encodedFileName,
+                  src: canvas.toDataURL(),
+                })
               })
 
               return
@@ -121,7 +138,13 @@ const ListThumbnail: React.FC<{
 
             if (isImage) {
               resizeThumbnail(buffer, (buffer) => {
-                setSrc(`data:${_fileType.mime};base64,${buffer.toString('base64')}`)
+                const base64 = `data:${_fileType.mime};base64,${buffer.toString('base64')}`
+                setSrc(base64)
+
+                return AppMetadata.setThumbnail({
+                  key: entry.encodedFileName,
+                  src: base64
+                })
               })
             }
           })

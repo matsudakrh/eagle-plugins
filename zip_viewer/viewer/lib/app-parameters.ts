@@ -1,4 +1,5 @@
 import { EagleResources } from 'eagle'
+import fs from 'fs'
 
 export default class AppParameters {
   static #item: EagleResources.Item | undefined
@@ -29,6 +30,15 @@ export default class AppParameters {
   static get thumbnailPath(): string {
     return this.#item.thumbnailPath
   }
+
+  static get metadataFilePath(): string {
+    return this.#item.metadataFilePath
+  }
+
+  static get metadata(): { [k in string]: any } {
+    return  JSON.parse(fs.readFileSync(AppParameters.metadataFilePath, 'utf8'))
+  }
+
   static get width(): string {
     return this.#params.get('width')
   }
