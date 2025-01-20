@@ -6,7 +6,7 @@ interface DirectoryState {
   currentHoverEntryName: null | string
 }
 
-const initialState = {
+const initialState: DirectoryState = {
   structure: {},
   currentDirectory: null,
   currentHoverEntryName: null,

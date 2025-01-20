@@ -5,6 +5,6 @@ enum STORE_NAMES {
 }
 
 export const DBConfig = {
-  VERSION: 4,
+  VERSION: 6,
   STORE_NAMES,
 }
