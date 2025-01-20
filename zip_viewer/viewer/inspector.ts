@@ -1,5 +1,5 @@
-import fs from 'fs'
 import './initialisers/theme'
+import './initialisers/db'
 import AppParameters from './lib/app-parameters'
 import { DBConfig } from './db/config'
 import { InfoObject } from './db/stores/info'
@@ -7,7 +7,6 @@ import { InfoObject } from './db/stores/info'
 window.eagle.onPluginCreate(() => {
   const renderLastFile = () => {
     let db: IDBDatabase
-    // TODO: inspector側でonupgradeneededが発火しない確証がない
     const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
     openReq.onsuccess = function (_) {
