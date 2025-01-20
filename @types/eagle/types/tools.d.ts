@@ -122,6 +122,19 @@ export namespace EagleTools {
     open: (menuItems: EagleResources.ContextMenuItem[]) => void
   }
 
+  type Dialog = {
+    showMessageBox: (options: {
+      message: string
+      title?: string
+      detail?: string
+      buttons?: string[]
+      type?: 'none' | 'info' | 'error' | 'question' | 'warning'
+    }) => Promise<{
+      response: number /* クリックされたボタンのインデックス */
+      checkboxChecked: boolean
+    }>
+  }
+
   type Shell = {
     openPath: (path: string) =>  Promise<void>
   }
