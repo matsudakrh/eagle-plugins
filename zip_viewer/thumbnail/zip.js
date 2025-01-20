@@ -4,11 +4,11 @@ const imageSize = require('./image-size')
 const resizeThumbnail = require('./resize-thumbnail.js')
 
 module.exports = async ({ src, dest, item }) => {
-  return new Promise(async (resolve, reject) => {
+  return new Promise(async (resolve, _) => {
     try {
       yauzl.open(src, { lazyEntries: true }, (err, zipFile) => {
         if (err) {
-          reject(err)
+          resolve(item)
           return
         }
 
@@ -48,11 +48,11 @@ module.exports = async ({ src, dest, item }) => {
                     let size = await imageSize(dest)
                     item.height = size?.height || item.height
                     item.width = size?.width || item.width
-                    zipFile.close()
+                    // zipFile.close()
                     // 4. return the result
                     return resolve(item)
                   } catch (err) {
-                    return reject(err)
+                    return resolve(item)
                   }
                 })
               })
@@ -62,12 +62,12 @@ module.exports = async ({ src, dest, item }) => {
 
         zipFile.on('end', function() {
           zipFile.close()
-          throw '画像が見つかりませんでした。'
+          resolve(item)
         })
       })
     }
     catch (err) {
-      return reject(err)
+      return resolve(item)
     }
   })
 }
