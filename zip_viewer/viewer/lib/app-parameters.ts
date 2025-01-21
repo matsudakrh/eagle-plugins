@@ -36,7 +36,8 @@ export default class AppParameters {
   }
 
   static get metadata(): { [k in string]: any } {
-    return  JSON.parse(fs.readFileSync(AppParameters.metadataFilePath, 'utf8'))
+    return {}
+    // return  JSON.parse(fs.readFileSync(AppParameters.metadataFilePath, 'utf8') || "{}")
   }
 
   static get width(): string {

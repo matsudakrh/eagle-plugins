@@ -1,3 +1,4 @@
+import path from 'path'
 import fs from 'fs'
 import './initialisers/theme'
 import './initialisers/db'
@@ -31,34 +32,41 @@ window.eagle.onPluginCreate(() => {
           if (count && data.count) {
             count.textContent = `${data.count}`
           }
-          window.eagle.item.getSelected().then(result => {
-            AppParameters.setItem(result[0])
-            const thumbnails = document.getElementById('thumbnails')
-            const metadata = AppParameters.metadata
-            if (thumbnails && metadata.thumbnails) {
-              thumbnails.textContent = `${Object.keys(metadata.thumbnails).length}`
-            }
-          })
         }
       }
     }
+
+    window.eagle.item.getSelected().then(result => {
+      AppParameters.setItem(result[0])
+      const dirPath = path.join(path.dirname(AppParameters.metadataFilePath), 'thumbnails')
+      if (!fs.existsSync(dirPath)) {
+        return
+      }
+      const list = fs.readdirSync(dirPath)
+
+      if (list.length) {
+        const thumbnails = document.getElementById('thumbnails')
+        if (thumbnails) {
+          thumbnails.textContent = `${list.filter(path => !path.startsWith('.')).length}`
+        }
+      }
+    })
   }
   renderLastFile()
   setInterval(renderLastFile, 1000)
 })
 
-
-const deleteThumbButton = document.getElementById('deleteThumbButton')
-deleteThumbButton?.addEventListener('click', async () => {
+document.getElementById('deleteThumbButton')?.addEventListener('click', async () => {
   const result = await window.eagle.dialog.showMessageBox({
-    message: 'サムネイルの情報を削除しますか？',
-    buttons: ['キャンセル', 'OK'],
-    type: 'none'
+    message: 'サムネイルを削除しますか？',
+    buttons: ['キャンセル', 'OK']
   })
 
   if (result.response === 1) {
-    const metadata = AppParameters.metadata
-    metadata.thumbnails = {}
-    fs.writeFileSync(AppParameters.metadataFilePath, JSON.stringify(metadata), 'utf8')
+    const dirPath = path.join(path.dirname(AppParameters.metadataFilePath), 'thumbnails')
+    if (!fs.existsSync(dirPath)) {
+      return
+    }
+    await fs.promises.rm(dirPath, { recursive: true, force: true })
   }
 })
