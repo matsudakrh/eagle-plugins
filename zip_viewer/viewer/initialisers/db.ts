@@ -1,6 +1,6 @@
 import { DBConfig } from '../db/config'
-import createAudioStore from '../db/stores/audio-store'
-import createVideoStore from '../db/stores/video-store'
+import createAudioStore from '../db/stores/audio'
+import createVideoStore from '../db/stores/video'
 import createInfoStore from '../db/stores/info'
 
 window.eagle.onPluginCreate((plugin) => {

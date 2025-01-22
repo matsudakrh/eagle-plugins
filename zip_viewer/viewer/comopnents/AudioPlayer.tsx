@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react'
 import { Entry } from 'yauzl'
 import { DBConfig } from '../db/config'
-import { AudioObject, putAudioObject } from '../db/stores/audio-store'
+import { AudioObject, putAudioObject } from '../db/stores/audio'
 import { useAppSelector } from '../hooks/redux'
 import AppParameters from '../lib/app-parameters'
 import VolumeBar from './AudioPlayer/VolumeBar'
