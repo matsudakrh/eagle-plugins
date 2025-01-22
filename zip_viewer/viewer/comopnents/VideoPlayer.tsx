@@ -5,13 +5,13 @@ import { DBConfig } from '../db/config'
 import { putVideoObject, VideoObject } from '../db/stores/video-store'
 import AppParameters from '../lib/app-parameters'
 import styles from './VideoPlayer.module.scss'
-import spinIcon from '../resources/spin.svg'
+import { spinIcon } from '../resources'
 
 const VideoPlayer: React.FC<{
   entry: Entry
   onContextMenu: () => void
 }> = ({ entry, onContextMenu }) => {
-  const videoRef = useRef(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const [src, setSrc] = useState<string>()
 
   useLayoutEffect(() => {
@@ -21,8 +21,8 @@ const VideoPlayer: React.FC<{
     let db: IDBDatabase
     const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
-    openReq.onsuccess = (event)=> {
-      db = (event.target as IDBOpenDBRequest).result
+    openReq.onsuccess = function (_) {
+      db = this.result
       const transaction = db.transaction(DBConfig.STORE_NAMES.Video, 'readonly')
       const store = transaction.objectStore(DBConfig.STORE_NAMES.Video)
       const getReq = store.get([AppParameters.identify, entry.encodedFileName])

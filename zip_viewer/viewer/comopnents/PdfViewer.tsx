@@ -12,8 +12,8 @@ import styles from './PdfViewer.module.scss'
 pdfjsDist.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdf.worker@1.0.0/pdf.worker.min.js'
 
 const PdfViewer: React.FC<{ buffer: Buffer }> = memo(({ buffer }) => {
-  const canvas = useRef(null)
-  const [generated, setGenerated] = useState(false)
+  const canvas = useRef<HTMLCanvasElement>(null)
+  const [generated, setGenerated] = useState<boolean>(false)
   const [pdf, setPdf] = useState<pdfjsDist.PDFDocumentProxy>()
   const filePath = useMemo(() => {
     const tmpPath = window.eagle.os.tmpdir()
@@ -102,7 +102,7 @@ const PdfViewer: React.FC<{ buffer: Buffer }> = memo(({ buffer }) => {
     const render = async () => {
       const page = await pdf.getPage(currentPage)
       /// 4倍でも荒くなるPDFがあったため大きくしておく
-      const scale = 8
+      const scale = 2
       const viewport = page.getViewport({ scale })
 
       canvas.current.style.width = null

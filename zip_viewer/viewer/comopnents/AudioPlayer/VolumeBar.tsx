@@ -5,7 +5,7 @@ import styles from './VolumeBar.module.scss'
 
 const VolumeBar = () => {
   const volume = useAppSelector(root => root.audio.volume)
-  const disoatch = useAppDispatch()
+  const dispatch = useAppDispatch()
 
   return (
     <input
@@ -16,7 +16,7 @@ const VolumeBar = () => {
       step="0.01"
       onChange={e => {
         const value = Number.parseFloat(e.target.value)
-        disoatch(changeVolume(value))
+        dispatch(changeVolume(value))
         const activeColor = "#6dd5ff";
         const inactiveColor = "#dddddd";
         const ratio = value * 100

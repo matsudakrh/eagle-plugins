@@ -8,12 +8,9 @@ import { setCurrentHoverEntry } from '../store/directory-store'
 import charEncode from '../lib/char-encode'
 import resizeThumbnail from '../lib/resize-thumbnail'
 import AppContextMenu from '../lib/app-context-menu'
-import AppMetadata from '../lib/app-metadata'
 import { getThumbnailPath, saveThumbnail } from '../lib/entry-thumbnails'
 import styles from './ListThumbnail.module.scss'
-import folderIcon from '../resources/kkrn_icon_folder_2.png'
-import audioIcon from '../resources/icon_audio.png'
-import spinIcon from '../resources/spin.svg'
+import { spinIcon, folderIcon, audioIcon } from '../resources'
 
 const ListThumbnail: React.FC<{
   entry: Entry
@@ -22,10 +19,10 @@ const ListThumbnail: React.FC<{
   entry,
   onOpenDirectory,
 }) => {
-  const ref = useRef(undefined)
+  const ref = useRef<HTMLDivElement>(null)
   const dispatch = useAppDispatch()
   // IntersectionObserverでlazyロードするため初期画像が最低限の高さを与える役割を兼ねる
-  const [src, setSrc] = useState(spinIcon)
+  const [src, setSrc] = useState<string>(spinIcon)
   const [fileType, setFileType] = useState<FileType.FileTypeResult>()
   const navigate = useNavigate()
   const words = useMemo(() => {

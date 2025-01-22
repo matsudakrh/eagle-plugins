@@ -7,7 +7,7 @@ import { setCurrentDirectory, setCurrentHoverEntry } from '../store/directory-st
 import ListThumbnail from '../comopnents/ListThumbnail'
 import EntriesFooter from '../comopnents/EntriesFooter'
 import styles from './Entries.module.scss'
-import folderIcon from '../resources/kkrn_icon_folder_2.png'
+import { folderIcon } from '../resources'
 
 const { Entry } = yauzl
 
@@ -17,7 +17,7 @@ const Entries: React.FC<{
   const dispatch = useAppDispatch()
   const structure = useAppSelector((state) => state.directory.structure)
   const currentDirectory = useAppSelector((state) => state.directory.currentDirectory)
-  const [visibleEntries, setVisibleEntries] = useState([])
+  const [visibleEntries, setVisibleEntries] = useState<TODO[]>([])
 
   const parentDirectory = useMemo(() => {
     if (!structure || !currentDirectory) {
@@ -29,6 +29,7 @@ const Entries: React.FC<{
       const dirs = children.filter(child => typeof child === 'object' && child !== null)
 
       return dirs.some((value) => {
+        // @ts-ignore // TODO
         return value.$_uuid === currentDirectory.$_uuid
       })
     })

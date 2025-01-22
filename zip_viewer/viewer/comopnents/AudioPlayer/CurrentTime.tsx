@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react'
 
 const CurrentTime: React.FC<{ audio: HTMLAudioElement | null }> = ({ audio }) => {
-  const [curentTime, setCurrentTime] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0)
 
   useLayoutEffect(() => {
     if (!audio) {
@@ -13,8 +13,8 @@ const CurrentTime: React.FC<{ audio: HTMLAudioElement | null }> = ({ audio }) =>
   }, [audio])
 
   return <div>
-    {curentTime || curentTime === 0.0
-      ? `${`${Math.trunc(curentTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(curentTime % 60)}`.padStart(2, '0')}`
+    {currentTime || currentTime === 0.0
+      ? `${`${Math.trunc(currentTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(currentTime % 60)}`.padStart(2, '0')}`
       : '--:--'} / {
     audio?.duration
       ? `${`${Math.trunc(audio?.duration / 60)}`.padStart(2, '0')}:${`${Math.ceil(audio?.duration % 60)}`.padStart(2, '0')}`

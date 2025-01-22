@@ -6,8 +6,8 @@ const SeekBar: React.FC<{
   audioBuffer: AudioBuffer
   audio: HTMLAudioElement
 }> = ({ audioBuffer, audio }) => {
-  const canvas = useRef(null)
-  const waveCanvas = useRef(null)
+  const canvas = useRef<HTMLCanvasElement>(null)
+  const waveCanvas = useRef<HTMLCanvasElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [currentPosition, setCurrentPosition] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)

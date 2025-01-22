@@ -16,7 +16,7 @@ import AudioPlayer from '../comopnents/AudioPlayer'
 import VideoPlayer from '../comopnents/VideoPlayer'
 import PreviewHeader from '../comopnents/PreviewHeader'
 import styles from './Preview.module.scss'
-import spinIcon from '../resources/spin.svg'
+import { spinIcon } from '../resources'
 
 const Preview: React.FC<{
   entries: yauzl.Entry[]

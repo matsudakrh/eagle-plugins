@@ -14,7 +14,7 @@ const AudioPlayer: React.FC<{
   entry: Entry
   onContextMenu: () => void
 }> = ({ entry, onContextMenu }) => {
-  const audioRef = useRef(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const volume = useAppSelector(state => state.audio.volume)
   const [src, setSrc] = useState<string>()
   const thumb = useMemo(() => {
@@ -30,8 +30,8 @@ const AudioPlayer: React.FC<{
     let db: IDBDatabase
     const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
-    openReq.onsuccess = (event)=> {
-      db = (event.target as IDBOpenDBRequest).result
+    openReq.onsuccess = function (_) {
+      db = this.result
       const transaction = db.transaction(DBConfig.STORE_NAMES.Audio, 'readonly')
       const store = transaction.objectStore(DBConfig.STORE_NAMES.Audio)
       const getReq = store.get([AppParameters.identify, entry.encodedFileName])
@@ -99,7 +99,7 @@ const AudioPlayer: React.FC<{
     audioRef.current?.pause()
 
     entry.zipFile.openReadStream(entry, null, (err, readStream) => {
-      const chunks: Uint8Array[] = []
+      const chunks: Uint8Array<ArrayBuffer>[] = []
 
       readStream.on('data', chunk => {
         chunks.push(chunk)
