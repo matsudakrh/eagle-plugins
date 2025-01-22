@@ -1,3 +1,7 @@
+.list_thumbnail {
+  position: relative;
+}
+
 .file_name {
   margin: 8px 0 0;
   overflow: hidden;
@@ -11,11 +15,25 @@
   width: 100%;
 }
 
-.imgContainer {
+.img_container {
   padding: 4px;
   border: 1px solid #fff;
   img {
     max-width: 100%;
     max-height: 100%;
   }
+}
+
+.ext_abel {
+  background-color: rgba(#333, 0.8);
+  color: #eee;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  display: inline-block;
+  font-size: 12px;
+  border-radius: 4px;
+  padding: 4px;
+  line-height: 1;
+  font-weight: bold;
 }

@@ -188,6 +188,7 @@ const ListThumbnail: React.FC<{
   return (
     <div
       ref={ref}
+      className={styles.list_thumbnail}
       onDoubleClick={handleDbClick}
       onPointerEnter={() =>
         dispatch(setCurrentHoverEntry(entry.encodedFileName)
@@ -196,11 +197,13 @@ const ListThumbnail: React.FC<{
     >
       <div>
         {src.startsWith('blob')
-          ? <div className={styles.imgContainer}><img src={src} alt="" /></div>
+          ? <div className={styles.img_container}><img src={src} alt="" /></div>
           : <img className={styles.img} onContextMenu={handleContextMenu} src={src} alt="" />
         }
       </div>
       <p className={styles.file_name}>{words[words.length - 1]}</p>
+
+      {fileType?.ext ? <span className={styles.ext_abel}>{fileType?.ext.toUpperCase()}</span> : null}
     </div>
   )
 })
