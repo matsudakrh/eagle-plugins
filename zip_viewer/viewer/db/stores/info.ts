@@ -26,9 +26,11 @@ export const putInfoObject = (db: IDBDatabase, data: InfoObject): void => {
         ...getReq.result,
         ...data,
       })
-      store.transaction.oncomplete = () => {
-        db.close()
-      }
+    } else {
+      store.put(data)
+    }
+    store.transaction.oncomplete = () => {
+      db.close()
     }
   }
   getReq.onerror = (event) => {

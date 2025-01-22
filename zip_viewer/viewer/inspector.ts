@@ -9,36 +9,34 @@ import { GeneratedTagName } from './lib/entry-thumbnails'
 
 window.eagle.onPluginCreate(() => {
   const renderLastFile = () => {
-    let db: IDBDatabase
-    const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
+    window.eagle.item.getSelected().then(result => {
+      AppParameters.setItem(result[0])
 
-    openReq.onsuccess = function (_) {
-      db = this.result
-      if (!db.objectStoreNames.contains(DBConfig.STORE_NAMES.Info)) {
-        return
-      }
+      let db: IDBDatabase
+      const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
 
-      const transaction = db.transaction(DBConfig.STORE_NAMES.Info, 'readonly')
-      const store = transaction.objectStore(DBConfig.STORE_NAMES.Info)
-      const getReq = store.get([AppParameters.paramsId])
+      openReq.onsuccess = function (_) {
+        db = this.result
 
-      getReq.onsuccess = () => {
-        if (getReq.result) {
-          const data: InfoObject = getReq.result
-          const p = document.getElementById('lastFileName')
-          if (p && data.lastFilePath) {
-            p.textContent = data.lastFilePath.split('/').join('/\n')
-          }
-          const count = document.getElementById('count')
-          if (count && data.count) {
-            count.textContent = `${data.count}`
+        const transaction = db.transaction(DBConfig.STORE_NAMES.Info, 'readonly')
+        const store = transaction.objectStore(DBConfig.STORE_NAMES.Info)
+        const getReq = store.get([AppParameters.paramsId])
+
+        getReq.onsuccess = (_) => {
+          if (getReq.result) {
+            const data: InfoObject = getReq.result
+            const p = document.getElementById('lastFileName')
+            if (p && data.lastFilePath) {
+              p.textContent = data.lastFilePath.split('/').join('/\n')
+            }
+            const count = document.getElementById('count')
+            if (count && data.count) {
+              count.textContent = `${data.count}`
+            }
           }
         }
       }
-    }
 
-    window.eagle.item.getSelected().then(result => {
-      AppParameters.setItem(result[0])
       const dirPath = path.join(path.dirname(AppParameters.metadataFilePath), 'thumbnails')
       if (!fs.existsSync(dirPath)) {
         return
