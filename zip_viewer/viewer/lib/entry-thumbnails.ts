@@ -13,7 +13,7 @@ export const getThumbnailPath = async (entry: Entry) => {
   return path.join(dirPath, fileName)
 }
 
-export const saveThumbnail = async (entry: Entry, thumb: string) => {
+export const saveThumbnail = async (entry: Entry, thumb: string /* base64 */ | Buffer) => {
   // const dirPath = path.join('/Users/hiroki/hoby/eagle-plugins/zip_viewer', 'tmp/thumbnails', AppParameters.identify)
   const dirPath = path.join(path.dirname(AppParameters.metadataFilePath), 'thumbnails')
   const fileName = `${await generateHash(entry.encodedFileName)}.jpg`

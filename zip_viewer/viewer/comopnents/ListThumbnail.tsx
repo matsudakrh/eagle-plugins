@@ -148,7 +148,7 @@ const ListThumbnail: React.FC<{
                   const base64 = `data:${_fileType.mime};base64,${image}`
                   setSrc(base64)
 
-                  saveThumbnail(entry, image)
+                  saveThumbnail(entry, buffer)
                   // return AppMetadata.setThumbnail({
                   //   key: entry.encodedFileName,
                   //   src: image,
