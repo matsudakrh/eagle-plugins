@@ -150,18 +150,10 @@ const Preview: React.FC<{
     openReq.onsuccess = (event) => {
       db = (event.target as IDBOpenDBRequest).result
 
-      const putReq = putInfoObject(db, {
+      putInfoObject(db, {
         itemId: AppParameters.identify,
         lastFilePath: entry.encodedFileName,
       })
-
-      putReq.onsuccess = () => {
-        console.log('put data success.')
-      }
-
-      putReq.onerror = (event) => {
-        console.log(event)
-      }
     }
   }, [entry, location.state])
 

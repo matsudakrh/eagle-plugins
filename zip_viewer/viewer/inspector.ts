@@ -2,9 +2,10 @@ import path from 'path'
 import fs from 'fs'
 import './initialisers/theme'
 import './initialisers/db'
-import AppParameters from './lib/app-parameters'
 import { DBConfig } from './db/config'
 import { InfoObject } from './db/stores/info'
+import AppParameters from './lib/app-parameters'
+import { GeneratedTagName } from './lib/entry-thumbnails'
 
 window.eagle.onPluginCreate(() => {
   const renderLastFile = () => {
@@ -68,5 +69,16 @@ document.getElementById('deleteThumbButton')?.addEventListener('click', async ()
       return
     }
     await fs.promises.rm(dirPath, { recursive: true, force: true })
+
+    setTimeout(() => {
+      window.eagle.item.getSelected().then(result => {
+        const item = result[0]
+        const index = item.tags.findIndex(tag => tag === GeneratedTagName)
+        if (index > -1) {
+          item.tags.splice(index, 1)
+        }
+        item.save()
+      })
+    })
   }
 })

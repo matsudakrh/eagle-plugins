@@ -72,18 +72,10 @@ const App: React.FC = memo(() => {
           const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
           openReq.onsuccess = function () {
             const db = this.result
-            const putReq = putInfoObject(db, {
+            putInfoObject(db, {
               itemId: AppParameters.identify,
               count,
             })
-
-            putReq.onsuccess = () => {
-              console.log('put data success.')
-            }
-
-            putReq.onerror = (event) => {
-              console.log(event)
-            }
           }
         })
       })

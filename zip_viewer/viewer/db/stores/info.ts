@@ -1,4 +1,5 @@
 import { DBConfig } from '../config'
+import AppParameters from '../../lib/app-parameters'
 
 const createInfoStore = (db: IDBDatabase) => {
   const obhectStore = db.createObjectStore(DBConfig.STORE_NAMES.Info, {
@@ -14,13 +15,26 @@ export type InfoObject = {
   count?: number
 }
 
-export const putInfoObject = (db: IDBDatabase, data: InfoObject): IDBRequest => {
+export const putInfoObject = (db: IDBDatabase, data: InfoObject): void => {
   const transaction = db.transaction(DBConfig.STORE_NAMES.Info, 'readwrite')
   const store = transaction.objectStore(DBConfig.STORE_NAMES.Info)
-  transaction.oncomplete = () => {
+  const getReq = store.get([AppParameters.identify])
+
+  getReq.onsuccess = () => {
+    if (getReq.result) {
+      store.put({
+        ...getReq.result,
+        ...data,
+      })
+      store.transaction.oncomplete = () => {
+        db.close()
+      }
+    }
+  }
+  getReq.onerror = (event) => {
+    console.log(event)
     db.close()
   }
-  return store.put(data)
 }
 
 export default createInfoStore
