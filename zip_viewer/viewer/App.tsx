@@ -44,7 +44,7 @@ const App: React.FC = memo(() => {
           entry.zipFile = zipFile
           entry.$_uuid ??= window.crypto.randomUUID()
           entries.push(entry)
-          if (!entry.isDirectory && ignoreNames.every(pattern => !entry.encodedFileName.endsWith(pattern))) {
+          if (!entry.isDirectory && ignoreNames.every(pattern => !entry.encodedFileName.toLowerCase().startsWith(pattern))) {
             count++
           }
           zipFile.readEntry()
