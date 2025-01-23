@@ -7,10 +7,10 @@ import AppParameters from './app-parameters'
 
 export default class AppContextMenu {
   static preview({
-    entry,
-    fileType,
-    buffer,
- }: { entry: Entry, fileType: FileType.FileTypeResult, buffer: Buffer }) {
+                   entry,
+                   fileType,
+                   buffer,
+                 }: { entry: Entry, fileType: FileType.FileTypeResult, buffer: Buffer }) {
     const words = entry.encodedFileName.split('/')
     const items: EagleResources.ContextMenuItem[] = [
       {
@@ -35,11 +35,11 @@ export default class AppContextMenu {
               a.download = words[words.length - 1]
               a.click()
 
-              URL.revokeObjectURL(url);
+              URL.revokeObjectURL(url)
             })
           })
-        }
-      }
+        },
+      },
     ]
 
     if (fileType?.mime.startsWith('image')) {
@@ -47,13 +47,13 @@ export default class AppContextMenu {
         resizeThumbnail(buffer, async (buffer) => {
           let item = await window.eagle.item.getById(AppParameters.identify)
           const tmpPath = window.eagle.os.tmpdir()
-          const filePath = `${tmpPath}/${words[words.length - 1]}`
+          const filePath = `${ tmpPath }/${ words[words.length - 1] }`
           fs
             .promises
             .writeFile(
               filePath,
               buffer.toString('base64'),
-              { encoding: 'base64' }
+              { encoding: 'base64' },
             )
             .then(() => {
               item.setCustomThumbnail(filePath).then((result) => {
@@ -96,10 +96,10 @@ export default class AppContextMenu {
   }
 
   static entries({
-    entry,
-    fileType,
-    src,
-  }: { entry: Entry, fileType: FileType.FileTypeResult, src: string }) {
+                   entry,
+                   fileType,
+                   src,
+                 }: { entry: Entry, fileType: FileType.FileTypeResult, src: string }) {
     const words = entry.encodedFileName.split('/')
     const items: EagleResources.ContextMenuItem[] = [{
       id: 'export',
@@ -115,7 +115,7 @@ export default class AppContextMenu {
           })
           readStream.on('end', () => {
             const buffer = Buffer.concat(chunks)
-            const blob = new Blob([buffer], { type: fileType.mime })
+            const blob = new Blob([buffer], { type: fileType?.mime })
             const url = URL.createObjectURL(blob)
             // ダウンロードリンクを作成
             const a = document.createElement('a')
@@ -123,29 +123,29 @@ export default class AppContextMenu {
             a.download = entry.encodedFileName
             a.click()
 
-            URL.revokeObjectURL(url);
+            URL.revokeObjectURL(url)
           })
         })
-      }
+      },
     }]
     if (fileType?.mime.startsWith('image/')) {
-      items.push(      {
+      items.push({
         id: 'thumbnail',
         label: 'サムネイルに設定',
         click: async () => {
-          if (!fileType || !fileType.mime.startsWith('image/')) {
+          if (!fileType || !fileType?.mime.startsWith('image/')) {
             alert('画像ではないファイルは設定出来ません')
             return
           }
           let item = await window.eagle.item.getById(AppParameters.identify)
           const tmpPath = window.eagle.os.tmpdir()
-          const filePath = `${tmpPath}/${words[words.length - 1]}`
+          const filePath = `${ tmpPath }/${ words[words.length - 1] }`
           fs
             .promises
             .writeFile(
               filePath,
-              src.replace('data:' + fileType.mime + ';base64,',''),
-              { encoding: 'base64' }
+              src.replace('data:' + fileType.mime + ';base64,', ''),
+              { encoding: 'base64' },
             )
             .then(() => {
               item.setCustomThumbnail(filePath).then((result) => {
@@ -154,7 +154,7 @@ export default class AppContextMenu {
             }).catch((result) => {
             console.log(result)
           })
-        }
+        },
       })
     }
     window.eagle.contextMenu.open(items)

@@ -9,15 +9,17 @@ export const GeneratedTagName = 'サムネイル生成'
 export const getThumbnailPath = async (entry: Entry) => {
   // const dirPath = path.join('/Users/hiroki/hoby/eagle-plugins/zip_viewer', 'tmp/thumbnails', AppParameters.identify)
   const dirPath = path.join(path.dirname(AppParameters.metadataFilePath), 'thumbnails')
-  const fileName = `${await generateHash(entry.encodedFileName)}.jpg`
+  const fileName = `${ await generateHash(entry.encodedFileName) }.jpg`
   return path.join(dirPath, fileName)
 }
 
 export const saveThumbnail = async (entry: Entry, thumb: string /* base64 */ | Buffer) => {
   // const dirPath = path.join('/Users/hiroki/hoby/eagle-plugins/zip_viewer', 'tmp/thumbnails', AppParameters.identify)
   const dirPath = path.join(path.dirname(AppParameters.metadataFilePath), 'thumbnails')
-  const fileName = `${await generateHash(entry.encodedFileName)}.jpg`
+  const fileName = `${ await generateHash(entry.encodedFileName) }.jpg`
+  const thumbnailPath = path.join(dirPath, fileName)
   await fs.promises.mkdir(dirPath, { recursive: true })
+  await fs.promises.writeFile(path.join(dirPath, fileName), thumb, { encoding: 'base64' })
 
   setTimeout(() => {
     window.eagle.item.getSelected().then(result => {
@@ -28,6 +30,5 @@ export const saveThumbnail = async (entry: Entry, thumb: string /* base64 */ | B
       item.save()
     })
   })
-
-  return fs.promises.writeFile(path.join(dirPath, fileName), thumb, { encoding: 'base64' })
+  return thumbnailPath
 }

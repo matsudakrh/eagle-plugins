@@ -21,7 +21,6 @@ const ListThumbnail: React.FC<{
 }) => {
   const ref = useRef<HTMLDivElement>(null)
   const dispatch = useAppDispatch()
-  // IntersectionObserverでlazyロードするため初期画像が最低限の高さを与える役割を兼ねる
   const [src, setSrc] = useState<string>(spinIcon)
   const [fileType, setFileType] = useState<FileType.FileTypeResult>()
   const navigate = useNavigate()
@@ -42,6 +41,7 @@ const ListThumbnail: React.FC<{
       rootMargin: '0px 0px 20px',
       threshold: 0
     }
+    // FIX: 全件発火しているがIntersectionObserverを通したほうが表示が早いので一旦放置
     const handler = ([intersection]) => {
       if (intersection.isIntersecting) {
         observer.disconnect()
@@ -102,10 +102,6 @@ const ListThumbnail: React.FC<{
 
                   if (fileType.mime.startsWith('audio/')) {
                     setSrc(audioIcon)
-                    // AppMetadata.setThumbnail({
-                    //   key: entry.encodedFileName,
-                    //   src: audioIcon,
-                    // })
                   }
                 }
               })
@@ -129,11 +125,6 @@ const ListThumbnail: React.FC<{
 
                 canvas.toBlob((blob) => {
                   setSrc(URL.createObjectURL(blob))
-
-                  // AppMetadata.setThumbnail({
-                  //   key: entry.encodedFileName,
-                  //   src: canvas.toDataURL(),
-                  // })
                 })
 
                 return
@@ -144,15 +135,9 @@ const ListThumbnail: React.FC<{
                   return
                 }
                 resizeThumbnail(buffer, (buffer) => {
-                  const image = buffer.toString('base64')
-                  const base64 = `data:${_fileType.mime};base64,${image}`
-                  setSrc(base64)
-
-                  saveThumbnail(entry, buffer)
-                  // return AppMetadata.setThumbnail({
-                  //   key: entry.encodedFileName,
-                  //   src: image,
-                  // })
+                  saveThumbnail(entry, buffer).then((result) => {
+                    setSrc(result)
+                  })
                 })
               }
             })
