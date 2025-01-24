@@ -138,21 +138,8 @@ export default class AppContextMenu {
             return
           }
           let item = await window.eagle.item.getById(AppParameters.identify)
-          const tmpPath = window.eagle.os.tmpdir()
-          const filePath = `${ tmpPath }/${ words[words.length - 1] }`
-          fs
-            .promises
-            .writeFile(
-              filePath,
-              src.replace('data:' + fileType.mime + ';base64,', ''),
-              { encoding: 'base64' },
-            )
-            .then(() => {
-              item.setCustomThumbnail(filePath).then((result) => {
-                console.log('result =>  ', result)
-              })
-            }).catch((result) => {
-            console.log(result)
+          item.setCustomThumbnail(src).then((result) => {
+            console.log('result =>  ', result)
           })
         },
       })
