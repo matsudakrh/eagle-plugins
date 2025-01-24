@@ -207,7 +207,7 @@ const Preview: React.FC<{
       return <img
         src={imgSrc}
         alt=""
-        className={styles.image}
+        className={imgSrc === spinIcon ? styles.image_loading : styles.image}
         onContextMenu={fileType?.mime.startsWith('image/') ? handleContextMenu : null}
       />
     }
