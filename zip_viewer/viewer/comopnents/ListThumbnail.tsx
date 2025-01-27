@@ -135,7 +135,7 @@ const ListThumbnail: React.FC<{
                   return
                 }
                 resizeThumbnail(buffer, (buffer) => {
-                  saveThumbnail(entry, buffer).then((result) => {
+                  saveThumbnail(entry.encodedFileName, buffer).then((result) => {
                     setSrc(result)
                   })
                 })

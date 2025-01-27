@@ -219,7 +219,7 @@ const Preview: React.FC<{
     }
 
     if (fileType?.mime === 'application/pdf' && buffer) {
-      return <PdfViewer key={entry.encodedFileName} buffer={buffer} />
+      return <PdfViewer key={entry.encodedFileName} entry={entry} buffer={buffer} />
     }
 
     if (fileType?.mime.startsWith('audio/')) {
@@ -231,7 +231,6 @@ const Preview: React.FC<{
     }
 
     return <div>
-      TODO: 未対応のファイル形式です
     </div>
   }
 
