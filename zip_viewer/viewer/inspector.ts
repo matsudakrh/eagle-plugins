@@ -14,7 +14,6 @@ window.eagle.onPluginCreate(() => {
 
       let db: IDBDatabase
       const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
-
       openReq.onsuccess = function (_) {
         db = this.result
 
@@ -28,6 +27,24 @@ window.eagle.onPluginCreate(() => {
             const p = document.getElementById('lastFileName')
             if (p && data.lastFilePath) {
               p.textContent = data.lastFilePath.split('/').join('/\n')
+
+              const playTime = (storeName: typeof DBConfig.STORE_NAMES.Audio | typeof DBConfig.STORE_NAMES.Video) => {
+                const transaction = db.transaction(storeName, 'readonly')
+                const store = transaction.objectStore(storeName)
+                const getReq = store.get([AppParameters.paramsId, data.lastFilePath])
+
+                getReq.onsuccess = (_) => {
+                  if (getReq.result) {
+                    const lastTime = document.getElementById('lastTime')
+                    if (lastTime && getReq.result.lastTime) {
+                      document.getElementById('lastTimeContainer').style.display = 'block'
+                      lastTime.textContent =  `${`${Math.trunc(getReq.result.lastTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(getReq.result.lastTime % 60)}`.padStart(2, '0')}`
+                    }
+                  }
+                }
+              }
+              playTime(DBConfig.STORE_NAMES.Audio)
+              playTime(DBConfig.STORE_NAMES.Video)
             }
             const count = document.getElementById('count')
             if (count && data.count) {
