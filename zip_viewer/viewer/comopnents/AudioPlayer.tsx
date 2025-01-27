@@ -50,6 +50,10 @@ const AudioPlayer: React.FC<{
     }
 
     const putData = () => {
+      // データの解釈がまだの時は上書きしない
+      if (!audioRef.current.duration) {
+        return
+      }
       const currentTime = audioRef.current.currentTime
       let lastTime: number
       if (currentTime >= audioRef.current.duration - 30) {

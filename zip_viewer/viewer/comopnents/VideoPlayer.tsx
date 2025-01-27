@@ -41,6 +41,10 @@ const VideoPlayer: React.FC<{
     }
 
     const putData = () => {
+      // データの解釈がまだの時は上書きしない
+      if (!videoRef.current.duration) {
+        return
+      }
       const currentTime = videoRef.current.currentTime
       let lastTime: number
       if (currentTime >= videoRef.current.duration - 30) {
