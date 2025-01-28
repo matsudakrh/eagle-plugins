@@ -69,13 +69,15 @@ const App: React.FC = memo(() => {
           dispatch(setStructure(getFolderStructure(entries)))
           setEntries(entries)
 
-          const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
-          openReq.onsuccess = function () {
-            const db = this.result
-            putInfoObject(db, {
-              itemId: AppParameters.identify,
-              count,
-            })
+          if (AppParameters.pluginId) {
+            const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
+            openReq.onsuccess = function () {
+              const db = this.result
+              putInfoObject(db, {
+                itemId: AppParameters.identify,
+                count,
+              })
+            }
           }
         })
       })

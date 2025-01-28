@@ -2,8 +2,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"prestart": "rm -rf dist/**/*",
-		"preinstall": "pnpm add -D ../@types/eagle",
-		"start": "parcel watch viewer/index.html viewer/inspector.html --dist-dir dist --public-url ./ --no-cache"
+		"start": "parcel watch viewer/index.html viewer/inspector.html --dist-dir dist --public-url ./ --no-cache",
+		"build": "parcel build viewer/index.html viewer/inspector.html --dist-dir dist --public-url ./ --no-cache"
 	},
 	"devDependencies": {
 		"@parcel/transformer-sass": "2.13.3",

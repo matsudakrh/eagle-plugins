@@ -12,7 +12,7 @@ export default class AppParameters {
   }
 
   static get pluginId(): string {
-    return window.eagle.plugin.manifest.id
+    return window.eagle.plugin.manifest?.id
   }
 
   static get paramsId(): string {
