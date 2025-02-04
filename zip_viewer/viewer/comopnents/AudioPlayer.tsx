@@ -13,7 +13,8 @@ import iconSpin from '../resources/spin.svg'
 const AudioPlayer: React.FC<{
   entry: Entry
   onContextMenu: () => void
-}> = ({ entry, onContextMenu }) => {
+  onNext: () => void
+}> = ({ entry, onContextMenu, onNext }) => {
   const audioRef = useRef<HTMLAudioElement>(null)
   const volume = useAppSelector(state => state.audio.volume)
   const [src, setSrc] = useState<string>()
@@ -163,7 +164,10 @@ const AudioPlayer: React.FC<{
       onTimeUpdate={handleTimeUpdate}
       onPlay={() => setIsPlaying(true)}
       onPause={() => setIsPlaying(false)}
-      onEnded={() => setIsPlaying(false)}
+      onEnded={() => {
+        setIsPlaying(false)
+        onNext()
+      }}
     ></audio>
   </div>
 }

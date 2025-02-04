@@ -223,7 +223,7 @@ const Preview: React.FC<{
     }
 
     if (fileType?.mime.startsWith('audio/')) {
-      return <AudioPlayer key={entry.encodedFileName} entry={entry} onContextMenu={handleContextMenu} />
+      return <AudioPlayer key={entry.encodedFileName} entry={entry} onContextMenu={handleContextMenu} onNext={handleNext}  />
     }
 
     if (fileType?.mime.startsWith('video/')) {
