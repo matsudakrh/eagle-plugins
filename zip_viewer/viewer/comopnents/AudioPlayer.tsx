@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react'
+import React, { useEffect, useMemo, useRef, useState, useLayoutEffect, ReactEventHandler } from 'react'
 import { Entry } from 'yauzl'
 import { DBConfig } from '../db/config'
 import { AudioObject, putAudioObject } from '../db/stores/audio'
@@ -45,45 +45,9 @@ const AudioPlayer: React.FC<{
         console.log(event)
       }
       transaction.oncomplete = () => {
+        db.close()
         console.log('transaction complete')
       }
-    }
-
-    const putData = () => {
-      // データの解釈がまだの時は上書きしない
-      if (!audioRef.current.duration) {
-        return
-      }
-      const currentTime = audioRef.current.currentTime
-      let lastTime: number
-      if (currentTime >= audioRef.current.duration - 30) {
-        lastTime = 0
-      } else {
-        lastTime =  currentTime - 0.3 > 0 ?  currentTime - 0.3 : 0
-      }
-
-      const putReq = putAudioObject(db, {
-        filePath: entry.encodedFileName,
-        itemId: AppParameters.identify,
-        lastTime,
-      })
-
-      putReq.onsuccess = () => {
-        console.log('put data success.')
-      }
-
-      putReq.onerror = (event) => {
-        console.log(event)
-      }
-
-      db.close()
-    }
-
-    window.addEventListener('beforeunload', putData)
-
-    return () => {
-      window.removeEventListener('beforeunload', putData)
-      putData()
     }
   }, [entry])
 
@@ -110,12 +74,14 @@ const AudioPlayer: React.FC<{
       })
 
       readStream.on('end', () => {
-        const buffer = Buffer.concat(chunks)
-        const blob = new Blob([buffer], { type: 'video/mp4' })
-        setSrc(URL.createObjectURL(blob))
-        audioContext.decodeAudioData(buffer.buffer).then((audioBuffer) => {
-          setAudioBuffer(audioBuffer)
-        })
+        setSrc(URL.createObjectURL(new Blob(chunks, { type: 'audio/wav' })))
+
+        setTimeout(() => {
+          const buffer = Buffer.concat(chunks)
+          audioContext.decodeAudioData(buffer.buffer).then((audioBuffer) => {
+            setAudioBuffer(audioBuffer)
+          })
+        }, 200)
       })
     })
 
@@ -133,6 +99,32 @@ const AudioPlayer: React.FC<{
       audioRef.current.play()
     } else {
       audioRef.current.pause()
+    }
+  }
+
+  const handleTimeUpdate: ReactEventHandler<HTMLAudioElement> = (event) => {
+    let db: IDBDatabase
+    const openReq = indexedDB.open(AppParameters.pluginId, DBConfig.VERSION)
+
+    openReq.onsuccess = function (_) {
+      db = this.result
+      const currentTime = (event.target as HTMLAudioElement).currentTime
+      let lastTime: number
+      if (!currentTime) {
+        return
+      }
+
+      if (currentTime >= audioRef.current.duration - 30) {
+        lastTime = 0
+      } else {
+        lastTime = currentTime - 0.3 > 0 ? currentTime - 0.3 : 0
+      }
+
+      putAudioObject(db, {
+        filePath: entry.encodedFileName,
+        itemId: AppParameters.identify,
+        lastTime,
+      })
     }
   }
 
@@ -168,6 +160,7 @@ const AudioPlayer: React.FC<{
       className={styles.audio}
       controls
       autoPlay
+      onTimeUpdate={handleTimeUpdate}
       onPlay={() => setIsPlaying(true)}
       onPause={() => setIsPlaying(false)}
       onEnded={() => setIsPlaying(false)}
