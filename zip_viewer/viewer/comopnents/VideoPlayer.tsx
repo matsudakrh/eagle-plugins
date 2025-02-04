@@ -92,9 +92,7 @@ const VideoPlayer: React.FC<{
       })
 
       readStream.on('end', async () => {
-        const buffer = Buffer.concat(chunks)
-        const fileType = await FileType.fromBuffer(buffer)
-        const blob = new Blob([buffer], { type: fileType?.mime || 'video/mp4' })
+        const blob = new Blob(chunks, { type: 'video/mp4' })
         setSrc(URL.createObjectURL(blob))
       })
     })

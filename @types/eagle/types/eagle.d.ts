@@ -2,8 +2,6 @@ import { EagleTools } from './tools'
 import { EagleResources } from './recources'
 
 declare global {
-  type TODO = any
-
   type EagleThemeNames =
     'Auto'
     | 'LIGHT'
@@ -14,7 +12,7 @@ declare global {
     | 'PURPLE'
 
   interface Window {
-    eagle: Readonly<{
+    readonly eagle: Readonly<{
       plugin: EagleTools.Plugin,
       item: EagleTools.Item
       folder: EagleTools.Folder

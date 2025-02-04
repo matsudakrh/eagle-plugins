@@ -38,8 +38,7 @@ const ListThumbnail: React.FC<{
   useLayoutEffect(() => {
     const options = {
       root: document.querySelector('#images'),
-      rootMargin: '0px 0px 20px',
-      threshold: 0
+      rootMargin: '0px 0px 20px 0px',
     }
     // FIX: 全件発火しているがIntersectionObserverを通したほうが表示が早いので一旦放置
     const handler = ([intersection]) => {
@@ -81,7 +80,7 @@ const ListThumbnail: React.FC<{
 
               if (isImage === true) {
                 if (exists) {
-                  readStream.destroy()
+                  // readStream.destroy()
                 }
                 return
               }

@@ -14,7 +14,7 @@ import { saveThumbnail } from '../lib/entry-thumbnails'
 pdfjsDist.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdf.worker@1.0.0/pdf.worker.min.js'
 
 const PdfViewer: React.FC<{ buffer: Buffer; entry: Entry }> = memo(({ buffer, entry }) => {
-  const canvas = useRef<HTMLCanvasElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const [generated, setGenerated] = useState<boolean>(false)
   const [pdf, setPdf] = useState<pdfjsDist.PDFDocumentProxy>()
   const filePath = useMemo(() => {
@@ -56,7 +56,7 @@ const PdfViewer: React.FC<{ buffer: Buffer; entry: Entry }> = memo(({ buffer, en
         label: 'ZIPのサムネイルに設定',
         click: async () => {
           let item = await window.eagle.item.getById(AppParameters.identify)
-          const image = canvas.current.toDataURL('image/png')
+          const image = canvasRef.current.toDataURL('image/png')
 
           resizeThumbnail(Buffer.from(image.replace('data:image\/png;base64,', ''), 'base64'), (buffer) => {
             const tmpPath = window.eagle.os.tmpdir()
@@ -81,7 +81,7 @@ const PdfViewer: React.FC<{ buffer: Buffer; entry: Entry }> = memo(({ buffer, en
         id: 'thumbnailPDF',
         label: 'ファイルのサムネイルに設定',
         click() {
-          const image = canvas.current.toDataURL('image/png')
+          const image = canvasRef.current.toDataURL('image/png')
 
           resizeThumbnail(Buffer.from(image.replace('data:image\/png;base64,', ''), 'base64'), (buffer) => {
             return saveThumbnail(entry.encodedFileName, buffer)
@@ -92,7 +92,7 @@ const PdfViewer: React.FC<{ buffer: Buffer; entry: Entry }> = memo(({ buffer, en
   }
 
   useLayoutEffect(() => {
-    if (!canvas.current) {
+    if (!canvasRef.current) {
       return
     }
 
@@ -106,7 +106,7 @@ const PdfViewer: React.FC<{ buffer: Buffer; entry: Entry }> = memo(({ buffer, en
     loader.promise.then((result) => {
       setPdf(result)
     })
-  }, [canvas])
+  }, [canvasRef])
 
   useEffect(() => {
     if (!pdf) {
@@ -114,17 +114,16 @@ const PdfViewer: React.FC<{ buffer: Buffer; entry: Entry }> = memo(({ buffer, en
     }
     const render = async () => {
       const page = await pdf.getPage(currentPage)
-      /// 4倍でも荒くなるPDFがあったため大きくしておく
-      const scale = 2
+      const scale = 4
       const viewport = page.getViewport({ scale })
 
-      canvas.current.style.width = null
-      canvas.current.style.height = null
-      canvas.current.height = viewport.height
-      canvas.current.width = viewport.width
+      canvasRef.current.style.width = null
+      canvasRef.current.style.height = null
+      canvasRef.current.height = viewport.height
+      canvasRef.current.width = viewport.width
 
       const renderContext = {
-        canvasContext: canvas.current.getContext('2d'),
+        canvasContext: canvasRef.current.getContext('2d'),
         viewport: viewport
       }
       return page.render(renderContext)
@@ -148,7 +147,7 @@ const PdfViewer: React.FC<{ buffer: Buffer; entry: Entry }> = memo(({ buffer, en
   }, {}, [pdf, currentPage])
 
   return <canvas
-    ref={canvas}
+    ref={canvasRef}
     onContextMenu={handleContextMenu}
     className={styles.canvas}
   ></canvas>

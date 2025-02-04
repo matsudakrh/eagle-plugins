@@ -39,6 +39,8 @@ window.eagle.onPluginCreate(() => {
                     if (lastTime && getReq.result.lastTime) {
                       document.getElementById('lastTimeContainer').style.display = 'block'
                       lastTime.textContent =  `${`${Math.trunc(getReq.result.lastTime / 60)}`.padStart(2, '0')}:${`${Math.ceil(getReq.result.lastTime % 60)}`.padStart(2, '0')}`
+                    } else {
+                      document.getElementById('lastTimeContainer').style.display = 'none'
                     }
                   }
                 }
