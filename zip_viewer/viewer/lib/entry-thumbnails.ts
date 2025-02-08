@@ -26,8 +26,8 @@ export const saveThumbnail = async (filePath: string, thumb: string /* base64 */
       const item = result[0]
       if (!item.tags.includes(GeneratedTagName)) {
         item.tags.push(GeneratedTagName)
+        item.save()
       }
-      item.save()
     })
   })
   return thumbnailPath
