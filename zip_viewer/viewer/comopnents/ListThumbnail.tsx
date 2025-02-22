@@ -49,6 +49,7 @@ const ListThumbnail: React.FC<{
           const exists = fs.existsSync(path)
           if (exists) {
             setSrc(path)
+            return
           }
 
           if (entry.encodedFileName.endsWith('/')) {
@@ -68,6 +69,7 @@ const ListThumbnail: React.FC<{
             readStream.on('data', (chunk) => {
               if (!_fileType?.mime?.startsWith('image/')) {
                 if (chunks.length > 2) {
+                  readStream.destroy()
                   // 一定量データを読み込んでも判別出来ていない時は終わる
                   // if (!readStream.destroyed && !readStream.closed) {
                   //   readStream.destroy()
@@ -80,7 +82,7 @@ const ListThumbnail: React.FC<{
 
               if (isImage === true) {
                 if (exists) {
-                  // readStream.destroy()
+                  readStream.destroy()
                 }
                 return
               }
