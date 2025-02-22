@@ -33,6 +33,14 @@
     font-size: 12px;
     color: #aaa;
   }
+
+  img {
+    max-width: 100%;
+  }
+
+  .mb-8 {
+    margin-bottom: 8px;
+  }
   </style>
 </head>
 <body>
@@ -47,6 +55,12 @@
     <p id="lastTime">-</p>
   </div>
   <button id="deleteThumbButton">生成されたサムネイルを削除</button>
+  <button id="voiceThumbButton">音声用サムネイルを設定</button>
+  <hr id="divider">
+  <div id="audio">
+    <div class="mb-8">音声サムネイル</div>
+    <img id="audioThumb" alt="" >
+  </div>
   <script src="inspector.ts" type="module"></script>
 </body>
 </html>

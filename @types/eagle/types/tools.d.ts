@@ -1,4 +1,7 @@
 import { EagleResources } from './recources'
+import { Buffer } from 'buffer'
+
+type TODO = any
 
 type EagleManifest = {
   id: string
@@ -133,6 +136,17 @@ export namespace EagleTools {
       response: number /* クリックされたボタンのインデックス */
       checkboxChecked: boolean
     }>
+  }
+
+  type Clipboard = {
+    clear: () => void
+    has: (format: string) => boolean
+    writeText: (text: string) => void
+    readText: () => Promise<string>
+    writeBuffer: (format: string, buffer: Buffer) => Buffer
+    readBuffer: (format: string) => Buffer
+    writeImage: (image: TODO /* electron: NativeImage */ ) => void
+    readImage: () => TODO /* electron: NativeImage */
   }
 
   type Shell = {

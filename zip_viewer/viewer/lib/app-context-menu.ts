@@ -2,6 +2,7 @@ import { Entry } from 'yauzl'
 import * as FileType from 'file-type'
 import fs from 'fs'
 import { EagleResources } from 'eagle'
+import { saveThumbnail } from '../lib/entry-thumbnails'
 import resizeThumbnail from './resize-thumbnail'
 import AppParameters from './app-parameters'
 
@@ -21,7 +22,7 @@ export default class AppContextMenu {
             if (err) {
               return
             }
-            const chunks: Uint8Array[] = []
+            const chunks: Uint8Array<ArrayBuffer>[] = []
             readStream.on('data', (chunk) => {
               chunks.push(chunk)
             })
@@ -43,8 +44,12 @@ export default class AppContextMenu {
     ]
 
     if (fileType?.mime.startsWith('image')) {
-      const handleClick = async (size: number) => {
+      const handleClick = async (size: number, audio: boolean = false) => {
         resizeThumbnail(buffer, async (buffer) => {
+          if (audio) {
+            return saveThumbnail(`${AppParameters.identify}_Audio`, buffer)
+          }
+
           let item = await window.eagle.item.getById(AppParameters.identify)
           const tmpPath = window.eagle.os.tmpdir()
           const filePath = `${ tmpPath }/${ words[words.length - 1] }`
@@ -90,6 +95,11 @@ export default class AppContextMenu {
           },
         ],
       })
+      items.push({
+        id: 'audioThumbnail',
+        label: '音声用サムネイルに設定',
+        click: () => handleClick(1200, true)
+      })
     }
 
     window.eagle.contextMenu.open(items)
@@ -100,7 +110,6 @@ export default class AppContextMenu {
                    fileType,
                    src,
                  }: { entry: Entry, fileType: FileType.FileTypeResult, src: string }) {
-    const words = entry.encodedFileName.split('/')
     const items: EagleResources.ContextMenuItem[] = [{
       id: 'export',
       label: 'ファイルをエクスポート',
@@ -109,7 +118,7 @@ export default class AppContextMenu {
           if (err) {
             return
           }
-          const chunks: Uint8Array[] = []
+          const chunks: Uint8Array<ArrayBuffer>[] = []
           readStream.on('data', (chunk) => {
             chunks.push(chunk)
           })

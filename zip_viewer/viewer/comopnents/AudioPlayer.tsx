@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState, useLayoutEffect, ReactEventHandler } from 'react'
+import { useKey } from 'react-use'
 import { Entry } from 'yauzl'
+import fs from 'fs'
+import path from 'path'
 import { DBConfig } from '../db/config'
 import { AudioObject, putAudioObject } from '../db/stores/audio'
 import { useAppSelector } from '../hooks/redux'
@@ -10,6 +13,14 @@ import CurrentTime from './AudioPlayer/CurrentTime'
 import styles from './AudioPlayer.module.scss'
 import iconSpin from '../resources/spin.svg'
 
+const waitTime = (time = 4) => {
+  return new Promise((resolve, reject) => {
+    return setTimeout(() => {
+      resolve(null)
+    }, time)
+  })
+}
+
 const AudioPlayer: React.FC<{
   entry: Entry
   onContextMenu: () => void
@@ -18,13 +29,22 @@ const AudioPlayer: React.FC<{
   const audioRef = useRef<HTMLAudioElement>(null)
   const volume = useAppSelector(state => state.audio.volume)
   const [src, setSrc] = useState<string>()
-  const thumb = useMemo(() => {
-    return AppParameters.thumbnailPath
-  }, [])
+  const [thumb, setThumb] = useState('')
   const [audioBuffer, setAudioBuffer] = useState<AudioBuffer>()
   const [isPlaying, setIsPlaying] = useState(false)
   const audioContext = useMemo(() => {
     return new window.AudioContext()
+  }, [])
+
+  useEffect(() => {
+    const dirPath = path.join(path.dirname(AppParameters.metadataFilePath), 'thumbnails')
+    const fileName = `${AppParameters.identify}_Audio.jpg`
+    const thumbnailPath = path.join(dirPath, fileName)
+    if (fs.existsSync(thumbnailPath)) {
+      setThumb(thumbnailPath)
+    } else {
+      setThumb(AppParameters.thumbnailPath)
+    }
   }, [])
 
   useLayoutEffect(() => {
@@ -115,7 +135,7 @@ const AudioPlayer: React.FC<{
         return
       }
 
-      if (currentTime >= audioRef.current.duration - 30) {
+      if (currentTime >= audioRef.current.duration - 10) {
         lastTime = 0
       } else {
         lastTime = currentTime - 0.3 > 0 ? currentTime - 0.3 : 0
@@ -128,6 +148,8 @@ const AudioPlayer: React.FC<{
       })
     }
   }
+
+  useKey(' ', handleClick, {}, [])
 
   return <div className={styles.audio_player}>
     <div onContextMenu={onContextMenu} className={styles.thumbnail_container}>

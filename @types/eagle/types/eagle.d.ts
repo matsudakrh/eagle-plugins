@@ -24,6 +24,7 @@ declare global {
       notification: EagleTools.Notification
       contextMenu: EagleTools.ContextMenu
       dialog: EagleTools.Dialog
+      clipboard: EagleTools.Clipboard
       shell: EagleTools.Shell
 
       onPluginCreate: (callback: (plugin: EagleTools.Plugin) => void) => void

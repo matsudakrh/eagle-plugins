@@ -1,5 +1,7 @@
 import Rule from './smartFolder/rules'
 
+type TODO = any
+
 export namespace EagleResources {
   type Item = {
     readonly id: string
