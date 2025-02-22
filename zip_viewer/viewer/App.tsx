@@ -8,7 +8,7 @@ import {
   Routes,
   HashRouter,
 } from 'react-router'
-import yauzl from 'yauzl'
+import yauzl, { Entry } from 'yauzl'
 import { putInfoObject } from './db/stores/info'
 import { DBConfig } from './db/config'
 import { useAppDispatch } from './hooks/redux'
@@ -50,7 +50,7 @@ const App: React.FC = memo(() => {
           zipFile.readEntry()
         })
         zipFile.on('end', () => {
-          entries.sort((a, b) => {
+          entries.sort((a: Entry, b: Entry) => {
             const aName = a.encodedFileName
             const bName = b.encodedFileName
 
@@ -58,6 +58,15 @@ const App: React.FC = memo(() => {
               return -1
             } else if (!a.isDirectory && b.isDirectory) {
               return 1
+            }
+            
+            const aWords = aName.split('.')
+            const bWords = bName.split('.')
+            if (aWords[aWords.length - 1] !== bWords[bWords.length - 1]) {
+              return aWords[aWords.length - 1].localeCompare(bWords[bWords.length - 1], 'ja', {
+                sensitivity: 'variant',
+                numeric: true,
+              })
             }
 
             return aName.localeCompare(bName, 'ja', {
