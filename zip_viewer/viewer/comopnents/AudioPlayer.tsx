@@ -150,6 +150,30 @@ const AudioPlayer: React.FC<{
   }
 
   useKey(' ', handleClick, {}, [])
+  useKey('Enter', handleClick, {}, [])
+  // >キー
+  useKey('.', () => {
+    if (!audioRef.current) {
+      return
+    }
+    const nextTime = audioRef.current.currentTime + 5
+    if (audioRef.current.duration < nextTime) {
+      return
+    }
+    audioRef.current.currentTime = nextTime
+  }, {}, [])
+  // <キー
+  useKey(',', () => {
+    if (!audioRef.current) {
+      return
+    }
+    const nextTime = audioRef.current.currentTime - 5
+    if (nextTime < 0) {
+      audioRef.current.currentTime = 0
+      return
+    }
+    audioRef.current.currentTime = nextTime
+  }, {}, [])
 
   return <div className={styles.audio_player}>
     <div onContextMenu={onContextMenu} className={styles.thumbnail_container}>
