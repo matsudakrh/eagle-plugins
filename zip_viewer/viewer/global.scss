@@ -1,14 +1,17 @@
 :root {
   --color: #fff;
+  --background-color: #18191c;
 }
 
 body {
   color: var(--color);
+  background-color: var(--background-color);
 }
 
 body[theme="LIGHT"],
 body[theme="LIGHTGRAY"] {
-  --color: #000;
+  --color: #18191c;
+  --background-color: #fff;
 }
 
 * {
