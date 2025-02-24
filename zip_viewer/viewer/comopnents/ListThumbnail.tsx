@@ -49,6 +49,17 @@ const ListThumbnail: React.FC<{
           const exists = fs.existsSync(path)
           if (exists) {
             setSrc(path)
+            if (entry.encodedFileName.toLowerCase().endsWith('jpg') || entry.encodedFileName.toLowerCase().endsWith('jpeg')) {
+              setFileType({
+                ext: 'jpg',
+                mime: 'image/jpeg',
+              })
+            } else if (entry.encodedFileName.toLowerCase().endsWith('png')) {
+              setFileType({
+                ext: 'jpg',
+                mime: 'image/png',
+              })
+            }
             return
           }
 
