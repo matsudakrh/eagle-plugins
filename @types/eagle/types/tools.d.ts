@@ -6,7 +6,7 @@ type TODO = any
 type EagleManifest = {
   id: string
   arch: 'all' | 'arm' | 'x64'
-  devtools: boolean
+  devTools: boolean
   keywords: string[]
   name: string
   logo: string
